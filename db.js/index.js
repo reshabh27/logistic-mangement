@@ -13,8 +13,16 @@ sequelize.authenticate().then(() => {
     console.log(e);
 })
 
-sequelize.sync().then(() => {
 
+const db = {};
+
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+
+
+
+sequelize.sync().then(() => {
 }).catch((e) => {
     console.log("there is an error while synching", e);
 })
