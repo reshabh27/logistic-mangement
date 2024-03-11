@@ -3,9 +3,13 @@ require('dotenv').config()
 
 const cors = require('cors');
 
+
+
+const orderRouter = require('./routes/orderRoutes.js');
 const userRoute = require('./routes/userRoutes.js')
 const { productRouter } = require("./routes/ProductRoute.js");
 const { Product } = require('./models/products.js');
+
 
 require('./db');
 
@@ -15,10 +19,16 @@ Product.sync().then(() => { console.log("resync product model") }).catch((err) =
 
 app.use(express.json());
 
+app.use('/orders',orderRouter)
+
+ 
+
+
 
 
 app.use("/user", userRoute);
 app.use("/products", productRouter);
+
 
 
 
