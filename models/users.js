@@ -1,4 +1,4 @@
-const { sequelize } = require("../db.js");
+// const { sequelize } = require("../db.js");
 
 module.exports = (sequelize, DataTypes) => {
   const Users = sequelize.define("users", {

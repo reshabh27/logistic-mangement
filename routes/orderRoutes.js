@@ -5,4 +5,6 @@ orderRouter.get('/testOrder',orderController.testOrder)
 orderRouter.post('/addOrder',orderController.addOrder)
 orderRouter.get('/getOrder',orderController.getOrder)
 orderRouter.get('/getOrder/:id',orderController.getOrderById)
+orderRouter.delete('/deleteOrder/:id',orderController.deleteOrder)
+orderRouter.patch('/updateOrder/:id',orderController.updateOrder)
 module.exports=orderRouter
