@@ -5,7 +5,7 @@ const sequelize = new Sequelize(process.env.DATABASE_NAME, process.env.DATABASE_
     port: '3306',
     dialect: 'mysql'
 });
-  
+
 
 sequelize.authenticate().then(() => {
     console.log('Connected to database');
@@ -18,6 +18,10 @@ const db = {};
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+
+db.User = require('../models/users')(sequelize, DataTypes);
+
 
 
 
