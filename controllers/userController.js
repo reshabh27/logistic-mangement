@@ -7,9 +7,8 @@ exports.handleSignup = asyncErrorHandler(async (req, res) => {
     // console.log(req.body);
     const user = await User.create(req.body);
     // console.log(user);
-    const token = await user.generateToken();
 
-    return res.status(201).json({ message: `user Created having username ${user.username}`, token });
+    return res.status(201).json({ "message": "User registered successfully", user });
 })
 
 exports.handleLogin = asyncErrorHandler(async (req, res) => {
@@ -18,7 +17,7 @@ exports.handleLogin = asyncErrorHandler(async (req, res) => {
         res.status(404).send({ message: "User not found" });
     const token = await user.generateToken();
 
-    res.status(200).send({ token });
+    res.status(200).send({ "message": "Login successful", token });
 })
 
 exports.handleGetMe = asyncErrorHandler(async (req, res) => {
