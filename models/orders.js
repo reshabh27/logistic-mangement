@@ -1,26 +1,26 @@
 module.exports = (sequelize, DataTypes) => {
-  const Orders = sequelize.define(
+  const Order = sequelize.define(
     "orders",
     {
-      userId: {
+      // Model attributes are defined here
+      orderId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "users", // <<< Reference to users Model
-          key: "id",
-        },
+        primaryKey: true,
+      },
+      customerId: {
+        type: DataTypes.INTEGER,
       },
       orderDate: {
         type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
       },
-      totalValue: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
+      deliveryDate: {
+        type: DataTypes.DATE,
+      },
+      status: {
+        type: DataTypes.STRING,
       },
     },
-    { timestamps: false }
+    {timestamps:true}
   );
-  return Orders;
+  return Order;
 };
