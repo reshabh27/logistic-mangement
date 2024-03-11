@@ -36,6 +36,10 @@ db.warehouses = require('../models/warehouse')(sequelize, DataTypes)
 // });
 // db.orders.belongsTo(db.customers);
 
+db.User = require('../models/users')(sequelize, DataTypes);
+
+
+
 
 
 
