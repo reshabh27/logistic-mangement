@@ -28,7 +28,7 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 db.orders = require('../models/orders')(sequelize, DataTypes)
-db.customers = require('../models/customer')(sequelize, DataTypes)
+db.users = require('../models/users')(sequelize, DataTypes)
 db.orderDetails = require('../models/orderDetails')(sequelize, DataTypes)
 db.orderWarehouses = require('../models/orderWarehouse')(sequelize, DataTypes)
 db.warehouses = require('../models/warehouse')(sequelize, DataTypes)

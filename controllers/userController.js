@@ -7,9 +7,8 @@ exports.handleSignup = asyncErrorHandler(async (req, res) => {
     // console.log(req.body);
     const user = await User.create(req.body);
     // console.log(user);
-    const token = await user.generateToken();
 
-    return res.status(201).json({ message: `user Created having username ${user.username}`, token });
+    return res.status(201).json({ "message": "User registered successfully", user });
 })
 
 exports.handleLogin = asyncErrorHandler(async (req, res) => {
@@ -18,13 +17,31 @@ exports.handleLogin = asyncErrorHandler(async (req, res) => {
         res.status(404).send({ message: "User not found" });
     const token = await user.generateToken();
 
-    res.status(200).send({ token });
+    res.status(200).send({ "message": "Login successful", token });
 })
 
 exports.handleGetMe = asyncErrorHandler(async (req, res) => {
     return res.send({ user: req.user });
 })
 
+
+exports.handleUpdateProfile = asyncErrorHandler(async (req, res) => {
+    const fields = ["email", "ContactName", "phone"];
+    const isNotUpdatable = Object.keys(req.body).some(key => !fields.includes(key));
+    // console.log(isNotUpdatable);
+    if (isNotUpdatable)
+        res.status(403).send({ message: "Only email, ContactName, phone can be edited" });
+
+    for (const key in req.body) {
+        if (Object.prototype.hasOwnProperty.call(req.body, key)) {
+            req.user[key] = req.body[key];
+        }
+    }
+
+    await req.user.save();
+
+    return res.status(200).send({ "message": "Profile updated successfully", user: req.user })
+})
 
 exports.handleLogout = asyncErrorHandler(async (req, res) => {
     const curruser = req.user;
