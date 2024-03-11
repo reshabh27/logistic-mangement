@@ -25,6 +25,24 @@ exports.handleGetMe = asyncErrorHandler(async (req, res) => {
 })
 
 
+exports.handleUpdateProfile = asyncErrorHandler(async (req, res) => {
+    const fields = ["email", "ContactName", "phone"];
+    const isNotUpdatable = Object.keys(req.body).some(key => !fields.includes(key));
+    // console.log(isNotUpdatable);
+    if (isNotUpdatable)
+        res.status(403).send({ message: "Only email, ContactName, phone can be edited" });
+
+    for (const key in req.body) {
+        if (Object.prototype.hasOwnProperty.call(req.body, key)) {
+            req.user[key] = req.body[key];
+        }
+    }
+
+    await req.user.save();
+
+    return res.status(200).send({ "message": "Profile updated successfully", user: req.user })
+})
+
 exports.handleLogout = asyncErrorHandler(async (req, res) => {
     const curruser = req.user;
     const currentTokens = JSON.parse(curruser.tokens);
