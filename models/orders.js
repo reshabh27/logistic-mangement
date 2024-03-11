@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
       },
-      customerId: {
+      userId: {
         type: DataTypes.INTEGER,
       },
       orderDate: {
