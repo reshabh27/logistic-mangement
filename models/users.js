@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     username: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true
     },
     email: {
       type: DataTypes.STRING,
@@ -89,7 +90,7 @@ module.exports = (sequelize, DataTypes) => {
     const user = await User.findOne({ where: { username: username } })
 
     if (!user) {
-      throw new Error("Unable to login !!")
+      throw new Error("there are no user with this username!")
     }
 
     const isMatch = await bcrypt.compare(password, user.password)
