@@ -6,6 +6,8 @@ const cors = require("cors");
 const orderRouter = require("./routes/orderRoutes.js");
 const userRoute = require("./routes/userRoutes.js");
 const { productRouter } = require("./routes/ProductRoute.js");
+const { Product } = require("./models/products.js");
+const transportRouter = require("./routes/transportRoutes.js");
 const db = require("./db");
 const { wareHouseRouter } = require("./routes/wareHouseRoutes.js");
 
@@ -20,6 +22,9 @@ db.products.sync()
   .catch((err) => {
     console.log(err);
   });
+
+app.use(express.json());
+
 db.productSupplier
   .sync()
   .then(() => {
@@ -37,6 +42,8 @@ app.use("/orders", orderRouter);
 
 app.use("/user", userRoute);
 app.use("/products", productRouter);
+app.use("/transports", transportRouter);
+
 app.use("/wareHouse",wareHouseRouter);
 
 app.listen(process.env.SERVER_PORT, () => {

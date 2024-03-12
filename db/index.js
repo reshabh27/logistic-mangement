@@ -29,16 +29,17 @@ db.users = require('../models/users')(sequelize, DataTypes)
 db.orderDetails = require('../models/orderDetails')(sequelize, DataTypes)
 db.orderWarehouses = require('../models/orderWarehouse')(sequelize, DataTypes)
 db.warehouses = require('../models/warehouse')(sequelize, DataTypes)
+db.transports = require('../models/transport')(sequelize, DataTypes)
 db.products = require('../models/products')(sequelize, DataTypes)
 db.productSupplier = require("../models/productSupplier")(sequelize,DataTypes);
 
 
-// db.customers.hasMany(db.orders, {
-//     foreignKey: 'customerId'
+// db.users.hasMany(db.orders, {
+//     foreignKey: 'userId'
 // });
-// db.orders.belongsTo(db.customers);
+// db.orders.belongsTo(db.users);
 
-db.User = require('../models/users')(sequelize, DataTypes);
+
 
 
 // creating one to many relationship between product and productSupplier table
@@ -63,7 +64,9 @@ db.User.belongsToMany(db.products,{through:db.productSupplier,uniqueKey:"userId"
 // db.orders.belongsToMany(db.warehouses, { through: db.orderWarehouses });
 // db.warehouses.belongsToMany(db.orders, { through: db.orderWarehouses });
 
-db.orders.sync({ force: false });
+db.orders.sync({ force: false })
+db.transports.sync({ force: false })
+
 db.warehouses.sync({force:false}).then(()=>{console.log("resyncing warehouses model")}).catch((err)=>{console.log(err)});
 db.orderWarehouses.sync({force:false}).then(()=>{console.log("resyncing orderWarehouses model")}).catch((err)=>{console.log(err)});
 
