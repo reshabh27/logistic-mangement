@@ -21,7 +21,7 @@ router.post('/logout', auth, handleLogout);
 
 router.put('/:userId/role', auth, handleUpdateUserRole)
 
-// router.delete('/:userId', auth, handleDeleteProfile)
+router.delete('/:userId', auth, handleDeleteProfile)
 
 
 module.exports = router;

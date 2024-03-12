@@ -87,3 +87,15 @@ exports.handleUpdateUserRole = asyncErrorHandler(async (req, res) => {
 })
 
 
+exports.handleDeleteProfile = asyncErrorHandler(async (req, res) => {
+    if (req.role !== "Admin")
+        res.status(403).send({ messgae: "You are not allowed to do this operation" })
+    const userId = req.params.userId;
+    await User.destroy({
+        where: {
+            id: userId
+        }
+    });
+    res.status(200).send({ message: "User deleted successfully" });
+
+})
