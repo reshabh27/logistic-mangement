@@ -68,6 +68,7 @@ const deleteOrder = async (req, res) => {
         },
       });
     }
+   
 
     res.status(200).json({
       message: "deleted Successfully",
@@ -107,7 +108,37 @@ const updateOrder = async (req, res) => {
     });
   }
 };
+const searchAndSort=async(req,res)=>{
+    const { page = 1, limit = 2, orderBy = 'userId', sortBy = 'asc', keyword } = req.query;
 
+    // Calculate offset for pagination
+    const offset = (page - 1) * limit;
+    
+    // Build the where clause for search
+    const whereClause = keyword ? { status: { [Sequelize.Op.like]: `%${keyword}%` } } : {};
+    
+    // Build the order array for sorting
+    const order = [[orderBy, sortBy.toUpperCase()]];
+    
+    try {
+      const orders = await Order.findAll({
+        where: whereClause,
+        limit: +limit,
+        offset: offset,
+        order: order,
+      });
+    
+      res.status(200).json({
+        data: orders,
+      });
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({
+        error: 'Internal Server Error',
+      });
+    }
+    
+}
 module.exports = {
   testOrder,
   addOrder,
@@ -115,4 +146,5 @@ module.exports = {
   getOrderById,
   deleteOrder,
   updateOrder,
+  searchAndSort
 };

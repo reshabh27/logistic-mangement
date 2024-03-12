@@ -7,4 +7,5 @@ orderRouter.get('/getOrder',orderController.getOrder)
 orderRouter.get('/getOrder/:id',orderController.getOrderById)
 orderRouter.delete('/deleteOrder/:id',orderController.deleteOrder)
 orderRouter.patch('/updateOrder/:id',orderController.updateOrder)
+orderRouter.get('/searchAndSort',orderController.searchAndSort)
 module.exports=orderRouter

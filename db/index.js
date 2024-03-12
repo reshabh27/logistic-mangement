@@ -30,13 +30,14 @@ db.users = require('../models/users')(sequelize, DataTypes)
 db.orderDetails = require('../models/orderDetails')(sequelize, DataTypes)
 db.orderWarehouses = require('../models/orderWarehouse')(sequelize, DataTypes)
 db.warehouses = require('../models/warehouse')(sequelize, DataTypes)
+db.transports = require('../models/transport')(sequelize, DataTypes)
 
-// db.customers.hasMany(db.orders, {
-//     foreignKey: 'customerId'
+// db.users.hasMany(db.orders, {
+//     foreignKey: 'userId'
 // });
-// db.orders.belongsTo(db.customers);
+// db.orders.belongsTo(db.users);
 
-db.User = require('../models/users')(sequelize, DataTypes);
+
 
 
 
@@ -47,5 +48,5 @@ db.User = require('../models/users')(sequelize, DataTypes);
 // db.warehouses.belongsToMany(db.orders, { through: db.orderWarehouses });
 
 db.orders.sync({ force: false })
-
+db.transports.sync({ force: false })
 module.exports = db;
