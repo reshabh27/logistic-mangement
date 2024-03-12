@@ -46,8 +46,8 @@ db.inventory = require("../models/inventory.js")(sequelize,DataTypes);
 
 // creating many to many relationship between user and product table through productSupplier
 
-db.products.belongsToMany(db.User,{through:db.productSupplier,foreignKey:"productId"});
-db.User.belongsToMany(db.products,{through:db.productSupplier,foreignKey:"userId"});
+db.products.belongsToMany(db.users,{through:db.productSupplier,foreignKey:"productId"});
+db.users.belongsToMany(db.products,{through:db.productSupplier,foreignKey:"userId"});
  
 // creating many to many relationship between product and warehouse through Inventory
 
@@ -68,5 +68,4 @@ db.transports.sync({ force: false })
 db.warehouses.sync({force:false}).then(()=>{console.log("resyncing warehouses model")}).catch((err)=>{console.log(err)});
 db.orderWarehouses.sync({force:false}).then(()=>{console.log("resyncing orderWarehouses model")}).catch((err)=>{console.log(err)});
 db.inventory.sync({force:false}).then(()=>{console.log("resyncing inventory model")}).catch((err)=>{console.log(err)});
-
 module.exports = db;
