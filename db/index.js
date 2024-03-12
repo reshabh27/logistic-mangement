@@ -1,7 +1,4 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const { Product } = require('../models/products');
-const { productSupplier } = require('../models/productSupplier');
-
 const sequelize = new Sequelize(process.env.DATABASE_NAME, process.env.DATABASE_USER, process.env.DATABASE_PASS, {
     host: process.env.DATABASE_HOST,
     port: '3306',
@@ -53,7 +50,7 @@ db.productSupplier.belongsTo(db.products);
 
 // creating one to many relationship between user and product supplier table
 
- 
+  
 db.User.hasMany(db.productSupplier,{foreignKey:"userId"});
 db.productSupplier.belongsTo(db.User);
 
@@ -66,6 +63,8 @@ db.User.belongsToMany(db.products,{through:db.productSupplier,uniqueKey:"userId"
 // db.orders.belongsToMany(db.warehouses, { through: db.orderWarehouses });
 // db.warehouses.belongsToMany(db.orders, { through: db.orderWarehouses });
 
-db.orders.sync({ force: false })
+db.orders.sync({ force: false });
+db.warehouses.sync({force:false}).then(()=>{console.log("resyncing warehouses model")}).catch((err)=>{console.log(err)});
+db.orderWarehouses.sync({force:false}).then(()=>{console.log("resyncing orderWarehouses model")}).catch((err)=>{console.log(err)});
 
 module.exports = db;
