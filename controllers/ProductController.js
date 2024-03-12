@@ -1,5 +1,7 @@
-const { Product } = require("../models/products.js");
+
 const { Op } = require("sequelize");
+const db = require("../db");
+const Product = db.products;
 var IntLarge = 1e9;
 
 // for checking folder structure.
@@ -54,7 +56,7 @@ const updateProductById = async (req, res) => {
       if (!product) {
         return res
           .status(400)
-          .json({ message: "User with given id not found" });
+          .json({ message: "Product with given id not found" });
       }
       options.forEach((option) => {
         product[option] = req.body[option];
@@ -77,7 +79,7 @@ const deleteProductById = async (req, res) => {
   try {
     const product = await Product.findByPk(id);
     if (!product) {
-      return res.status(400).json({ message: "User with given id not found" });
+      return res.status(400).json({ message: "Product with given id not found" });
     }
 
     await product.destroy();
@@ -90,8 +92,8 @@ const deleteProductById = async (req, res) => {
 
 
 const orderArr = (temp) => {
-    const arr = temp.split('_');
-    if(arr[0]?.trim() !== '' && arr[1]?.trim() !== ''){
+    const arr = temp?.split('_')||[];
+    if((arr[0]?.trim() !== '' && arr[1]?.trim() !== '')&&(arr.length === 2)){
         if(arr[1] === 'asc'){
             return [arr[0],'ASC'];
         }
@@ -182,7 +184,7 @@ const getProducts = async (req, res) => {
   try {
     const product = await Product.findAll({
       where: comp,
-      order:[orderList],
+      order:orderList.length===0?"":[[orderList]],
     }); 
 
     if (product.length === 0) {
@@ -203,4 +205,5 @@ module.exports = {
   updateProductById,
   deleteProductById,
   getProducts,
+  orderArr
 };

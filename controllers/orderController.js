@@ -6,6 +6,8 @@ const testOrder = async (req, res) => {
 };
 const addOrder = async (req, res) => {
   try {
+    if (req.role !== "Customer")
+      return res.status(403).send({ message: "Only customers can request orders." })
     const order = await Order.create(req.body);
     res.status(201).json({
       status: "success",
@@ -17,6 +19,10 @@ const addOrder = async (req, res) => {
 };
 const getOrder = async (req, res) => {
   try {
+    const permitedRoles = ["Admin", "Customer", "Warehouse Manager"];
+    if (!permitedRoles.includes(req.role))
+      res.status(403).send({ message: "your type of roles are not permited to access this." })
+
     const order = await Order.findAll({});
     res.status(200).json({
       status: "success",
@@ -30,6 +36,13 @@ const getOrder = async (req, res) => {
 };
 const getOrderById = async (req, res) => {
   try {
+    const permitedRoles = ["Admin", "Customer", "Warehouse Manager"];
+    if (!permitedRoles.includes(req.role))
+      return res.status(403).send({ message: "your type of roles are not permited to access this." })
+    if (req.role === "Customer") {
+      if (req.params.id !== req.user.id)
+        return res.status(403).send({ message: " You are not allowed to do this operation." });
+    }
     const order = await Order.findOne({
       where: {
         orderId: req.params.id,
@@ -52,6 +65,8 @@ const getOrderById = async (req, res) => {
 };
 const deleteOrder = async (req, res) => {
   try {
+    if (req.role !== "Admin")
+      return res.status(403).send({ message: "You are not allowed to do this operation." })
     const order = await Order.findOne({
       where: {
         orderId: req.params.id,
@@ -81,6 +96,8 @@ const deleteOrder = async (req, res) => {
 };
 const updateOrder = async (req, res) => {
   try {
+    if ((req.role !== "Admin") && (req.role !== "Warehouse Manager"))
+      return res.status(403).send({ message: "You are not allowed to do this operation." })
     const order = await Order.findOne({
       where: {
         orderId: req.params.id,
@@ -100,7 +117,7 @@ const updateOrder = async (req, res) => {
 
     res.status(200).json({
       message: "updated successfully"
-    //   data: order,
+      //   data: order,
     });
   } catch (err) {
     res.status(400).json({
