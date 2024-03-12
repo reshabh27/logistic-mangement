@@ -10,6 +10,7 @@ const { Product } = require("./models/products.js");
 const transportRouter = require("./routes/transportRoutes.js");
 const db = require("./db");
 const { wareHouseRouter } = require("./routes/wareHouseRoutes.js");
+const { inventoryRouter } = require("./routes/inventoryRoutes.js");
 
 require("./db");
 
@@ -45,6 +46,7 @@ app.use("/products", productRouter);
 app.use("/transports", transportRouter);
 
 app.use("/wareHouse",wareHouseRouter);
+app.use("/inventory",inventoryRouter);
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`server started at ${process.env.SERVER_PORT}`);
