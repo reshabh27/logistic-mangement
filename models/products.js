@@ -1,7 +1,8 @@
-const {sequelize,Sequelize} = require("../db");
+// const {sequelize,Sequelize} = require("../db");
 
-const {DataTypes} = require("sequelize")
 
+// const {DataTypes} = require("sequelize")
+module.exports=(sequelize,DataTypes)=>{
 const Product = sequelize.define("product",{
     name:{
         type:DataTypes.STRING,
@@ -63,5 +64,6 @@ const Product = sequelize.define("product",{
         },
     }
 });
-
-module.exports = {Product};
+return Product
+}
+// module.exports = {Product};
