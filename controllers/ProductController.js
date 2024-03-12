@@ -152,7 +152,7 @@ const getProducts = async (req, res) => {
       } else {
         validParams[key] = params[key];
       }
-    }
+    } 
   }
 
   // comparator obeject for querying the products table

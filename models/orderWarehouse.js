@@ -3,24 +3,51 @@ module.exports = (sequelize, DataTypes) => {
       "orderWarehouses",
       {
         // Model attributes are defined here Attributes: OrderWarehouseID (PK), OrderID (FK), WarehouseID (FK), DispatchDate, Quantity
-        orderWarehouseId: {
-          type: DataTypes.INTEGER,
-          primaryKey: true,
-        },
         orderId: {
           type: DataTypes.INTEGER,
+          allowNull:false,
+          validate:{
+              notNull:true,
+              notEmpty:true
+          }
         },
-        warehouseId: {
+        wareHouseId: {
           type: DataTypes.INTEGER,
+          allowNull:false,
+          validate:{
+              notNull:true,
+              notEmpty:true
+          }
         },
         dispatchDate: {
           type: DataTypes.DATE,
+          allowNull:false,
+          validate:{
+            notNull:true,
+            notEmpty:true,
+            isValid(value){
+              const currValue = new Date();
+              if(value<currValue){
+                throw new Error("Providing Past date is inValid");
+              }
+            }
+          }
         },
         quantity: {
           type: DataTypes.INTEGER,
+          allowNull:false,
+          validate:{
+              isFloat:true,
+              notNull:true,
+              isValid(value){
+                  if(value<0){
+                      throw new Error("Quatity of a product cannot be a negative number.")
+                  }
+              },
+              min:0
+          },
         },
-      },
-      {timestamps:true}
+      }
     );
     return OrderWarehouse;
   };

@@ -8,6 +8,7 @@ const userRoute = require("./routes/userRoutes.js");
 const { productRouter } = require("./routes/ProductRoute.js");
 const db = require("./db");
 const { wareHouseRouter } = require("./routes/wareHouseRoutes.js");
+const { inventoryRouter } = require("./routes/inventoryRoutes.js");
 
 require("./db");
 
@@ -38,6 +39,7 @@ app.use("/orders", orderRouter);
 app.use("/user", userRoute);
 app.use("/products", productRouter);
 app.use("/wareHouse",wareHouseRouter);
+app.use("/inventory",inventoryRouter);
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`server started at ${process.env.SERVER_PORT}`);
