@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { User } = require("../db");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 
@@ -21,13 +22,41 @@ exports.handleLogin = asyncErrorHandler(async (req, res) => {
 })
 
 
+
+// ?role=Customer
+// ?username=john
+// ?sortBy=username_ASC
 exports.getAllUsers = asyncErrorHandler(async (req, res) => {
+    let options = {};
+    if (req.query?.role)
+        options.role = req.query.role;
+    let usernameOption = "";
+    if (req.query?.username)
+        usernameOption = req.query.username;
+    let sortByfield = [];
+    const canSortFields = ["username", "role", "email", "contactName", "phone"];
+    if (req.query?.sortBy) {
+        sortByfield = req.query.sortBy.split("_");
+        if (!canSortFields.includes(sortByfield[0]))
+            return res.status(400).send({ message: "Can not sort based on given method." });
+    }
+
     if (req.role !== "Admin")
-        res.send(403).send({ message: "You are not allowed to do this operation." });
-    const users = await User.findAll({});
+        return res.status(403).send({ message: "You are not allowed to do this operation." });
+    const users = await User.findAll({
+        where: {
+            ...options,
+            username: {
+                [Op.like]: `%${usernameOption}%`
+            }
+        },
+        order: [sortByfield]
+    });
     // console.log(users);
     res.status(200).send({ users });
 })
+
+
 
 
 exports.handleGetMe = asyncErrorHandler(async (req, res) => {
