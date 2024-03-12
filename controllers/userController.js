@@ -20,6 +20,16 @@ exports.handleLogin = asyncErrorHandler(async (req, res) => {
     res.status(200).send({ "message": "Login successful", token });
 })
 
+
+exports.getAllUsers = asyncErrorHandler(async (req, res) => {
+    if (req.role !== "Admin")
+        res.send(403).send({ message: "You are not allowed to do this operation." });
+    const users = await User.findAll({});
+    // console.log(users);
+    res.status(200).send({ users });
+})
+
+
 exports.handleGetMe = asyncErrorHandler(async (req, res) => {
     return res.send({ user: req.user });
 })
@@ -60,3 +70,20 @@ exports.handleLogout = asyncErrorHandler(async (req, res) => {
     res.json("Logout successful");
 
 })
+
+exports.handleUpdateUserRole = asyncErrorHandler(async (req, res) => {
+    if (req.role !== "Admin")
+        res.status(401).send({ message: "only Admin can access this." })
+    const userId = req.params.userId
+    // console.log(req.body);
+    const test = await User.update(req.body, {
+        where: {
+            id: userId
+        }
+    })
+    const user = await User.findByPk(userId)
+    // console.log(test);
+    return res.status(201).send({ "message": "User role updated successfully", user });
+})
+
+
