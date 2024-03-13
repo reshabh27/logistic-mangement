@@ -47,9 +47,9 @@ db.orders.belongsToMany(db.transports, { through: 'db.orderTransports',foreignKe
 
 // creating many to many relationship between user and product table through productSupplier
 
-db.products.belongsToMany(db.users, { through: db.productSupplier, foreignKey: "productId" });
-db.users.belongsToMany(db.products, { through: db.productSupplier, foreignKey: "userId" });
-
+db.products.belongsToMany(db.users,{through:db.productSupplier,foreignKey:"productId"});
+db.users.belongsToMany(db.products,{through:db.productSupplier,foreignKey:"userId"});
+ 
 // creating many to many relationship between product and warehouse through Inventory
 
 db.products.belongsToMany(db.warehouses, { through: db.inventory, foreignKey: "productId" });
@@ -70,9 +70,7 @@ db.transports.sync({ force: false })
 db.orderTransports.sync({ force: false })
 db.users.sync({ alter:false })
 
-
-db.warehouses.sync({ force: false }).then(() => { console.log("resyncing warehouses model") }).catch((err) => { console.log(err) });
-db.orderWarehouses.sync({ force: false }).then(() => { console.log("resyncing orderWarehouses model") }).catch((err) => { console.log(err) });
-db.inventory.sync({ force: false }).then(() => { console.log("resyncing inventory model") }).catch((err) => { console.log(err) });
-
+db.warehouses.sync({force:false}).then(()=>{console.log("resyncing warehouses model")}).catch((err)=>{console.log(err)});
+db.orderWarehouses.sync({force:false}).then(()=>{console.log("resyncing orderWarehouses model")}).catch((err)=>{console.log(err)});
+db.inventory.sync({force:false}).then(()=>{console.log("resyncing inventory model")}).catch((err)=>{console.log(err)});
 module.exports = db;

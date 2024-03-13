@@ -58,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
-
+  // Hooks (beforeCreate) to perform actions before creating a user
   User.beforeCreate(async (user, options) => {
     user.username = user.username.trim();
     user.email = user.email.trim();
@@ -67,6 +67,8 @@ module.exports = (sequelize, DataTypes) => {
     user.tokens = JSON.stringify([]);
   })
 
+
+  // Hooks (beforeUpdate) to perform actions before updating a user
   User.beforeUpdate(async (user, option) => {
     if (user.changed("password")) {
       user.password = user.password.trim();
@@ -74,30 +76,36 @@ module.exports = (sequelize, DataTypes) => {
     }
   })
 
+
+  // Custom method to generate a token for the user
   User.prototype.generateToken = async function () {
     let user = this;
+
+    // generating token using jsonwebtoken
     const token = jwt.sign({ id: user.id.toString(), role: user.role }, "my_secret");
     let tokens = JSON.parse(user.tokens || "[]");
     tokens.push({ token });
     user.tokens = JSON.stringify(tokens);
     await user.save();
-    // console.log(user);
     return token;
   }
 
+
+  // Custom method to find a user by provided credentials
   User.findByCredentials = async (username, password) => {
+
     const user = await User.findOne({ where: { username: username } })
 
+    // if user not found with the username
     if (!user) {
       throw new Error("there are no user with this username!")
     }
 
+    // checking if password matches
     const isMatch = await bcrypt.compare(password, user.password)
-
     if (!isMatch) {
       throw new Error("Unable to login !!")
     }
-
     return user
   }
 

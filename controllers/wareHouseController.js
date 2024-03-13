@@ -2,6 +2,8 @@ const { Op } = require("sequelize");
 const db = require("../db");
 const { orderArr } = require("./ProductController");
 const WareHouse = db.warehouses;
+const Product = db.products;
+const Inventory = db.inventory;
 var IntLarge = 1e9;
 
 const check = (req, res) => {
@@ -15,7 +17,7 @@ const addWareHouses = async (req, res) => {
     return res
       .status(200)
       .json({ message: "WareHouse added Successfully", wareHouse });
-  } catch (error) { 
+  } catch (error) {
     res.status(400).json(error);
   }
 };
@@ -58,7 +60,7 @@ const updateWareHouse = async (req, res) => {
       options.forEach((option) => {
         wareHouse[option] = req.body[option];
       });
-      await wareHouse.save(); 
+      await wareHouse.save();
       return res
         .status(200)
         .json({ message: "WareHouse updated Successfully", wareHouse });
@@ -155,7 +157,7 @@ const getWareHouse = async (req, res) => {
   try {
     const wareHouse = await WareHouse.findAll({
       where: comp,
-      order: orderList.length===0?"":[[orderList]],
+      order: orderList.length === 0 ? "" : [[orderList]],
     });
     if (wareHouse.length === 0) {
       return res
@@ -168,11 +170,69 @@ const getWareHouse = async (req, res) => {
   }
 };
 
+//Retrieve a list of all inventory items in a specific warehouse.
+const specificWareHouseInventory = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const inventory = await WareHouse.findAll({
+      where: { id },
+      include: [{ model: Product }],
+    });
+    if (!inventory) {
+      return res
+        .status(400)
+        .json({ message: "Inventory related to given wareHouse not found" });
+    }
+    return res.status(200).json({ inventory });
+  } catch (error) {
+    return res.status(400).json(error);
+  }
+};
+
+// update the quantity of an inventory item in a warehouse.
+
+const updateInventoryWareHouse = async (req, res) => {
+  const { wareHouseId, inventoryId } = req.params;
+  const allowedOptions = ["quantity"];
+  const options = Object.keys(req.body);
+  const isValidOptions = options.every((option) => {
+    return allowedOptions.includes(option);
+  });
+  if (!isValidOptions) {
+    return res
+      .status(400)
+      .json({ message: "Invalid feild added for updating data" });
+  } else {
+    try {
+      const inventory = await Inventory.findOne({
+        where: {
+          id: inventoryId,
+          wareHouseId,
+        },
+      });
+      if (!inventory) {
+        return res
+          .status(400)
+          .json({ message: "Inventory related to given wareHouse not found" });
+      }
+      options.forEach((option) => {
+        inventory[option] = req.body[option];
+      });
+      await inventory.save();
+      return res.status(200).json({"message":"Inventory updated successfully", inventory });
+    } catch (error) {
+      return res.status(400).json(error);
+    }
+  }
+};
+
 module.exports = {
   check,
   addWareHouses,
   getWareHousesById,
   updateWareHouse,
   deleteWareHouse,
-  getWareHouse
+  getWareHouse,
+  specificWareHouseInventory,
+  updateInventoryWareHouse,
 };
