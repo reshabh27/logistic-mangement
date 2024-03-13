@@ -8,4 +8,5 @@ orderRouter.get('/getOrder', auth, orderController.getOrder)
 orderRouter.get('/getOrder/:id', auth, orderController.getOrderById)
 orderRouter.delete('/deleteOrder/:id', auth, orderController.deleteOrder)
 orderRouter.patch('/updateOrder/:id', auth, orderController.updateOrder)
+orderRouter.get('/manyToOne',  orderController.manyToOne)
 module.exports = orderRouter
