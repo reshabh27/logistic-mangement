@@ -1,5 +1,5 @@
 const db = require("../db/index");
-const {Sequelize}=require('sequelize')
+const { Sequelize } = require("sequelize");
 const Transport = db.transports;
 const testTC = async (req, res) => {
     res.send("transport is working");
@@ -120,7 +120,7 @@ const transportQuery = async (req, res) => {
         } = req.query;
         const offset = (page - 1) * limit;
         const whereClause = keyword
-            ? { type:{ [Sequelize.Op.like]: `${keyword}` } }
+            ? { type: { [Sequelize.Op.like]: `${keyword}` } }
             : {};
         const order = [[orderBy, sortBy.toUpperCase()]];
         const transports = await Transport.findAll({
@@ -133,7 +133,7 @@ const transportQuery = async (req, res) => {
             data: transports,
         });
     } catch (err) {
-        console.log(err)
+        console.log(err);
         res.status(400).json({
             message: err.message,
         });
