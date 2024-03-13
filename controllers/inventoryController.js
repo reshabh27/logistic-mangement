@@ -1,6 +1,8 @@
 const { Op } = require("sequelize");
 const db = require("../db");
 const Inventory = db.inventory;
+const Product = db.products;
+const WareHouse = db.warehouses;
 
 // route handler for checking routers
 const check = (req, res) => {
@@ -80,4 +82,26 @@ const deleteInventory = async (req, res) => {
   }
 };
 
-module.exports = { check, addInventory, updateInventory, deleteInventory };
+// route handler for retrieving a list of all inventory items for a specific product across all warehouses.
+const specificProductInventory = async(req,res) => {
+    const id = req.params.id;
+    try {
+        const inventory = await Product.findAll({
+            where:{id},
+            include:[
+                {model:WareHouse}
+            ]
+        });
+        if(!inventory){
+            return res
+            .status(400)
+            .json({ message: "Inventory related to  given product not found" });
+        }
+        return res.status(200).json({ inventory });
+    } catch (error) {
+        return res.status(400).json(error);
+    }
+}
+
+
+module.exports = { check, addInventory, updateInventory, deleteInventory,specificProductInventory };
