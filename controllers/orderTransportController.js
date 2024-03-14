@@ -16,6 +16,7 @@ const addOrderTransport = async (req, res) => {
       distance: distance,
       cost: cost,
     });
+    
     res.status(201).json({ data });
   } catch (err) {
     console.log(err);
