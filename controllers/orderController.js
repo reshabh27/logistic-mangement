@@ -7,8 +7,8 @@ const testOrder = async (req, res) => {
 };
 const addOrder = async (req, res) => {
   try {
-    // if (req.role !== "Customer")
-    //     return res.status(403).send({ message: "Only customers can request orders." })
+    if (req.role !== "Customer")
+        return res.status(403).send({ message: "Only customers can request orders." })
     const order = await Order.create(req.body);
     res.status(201).json({
       status: "success",
