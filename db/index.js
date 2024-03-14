@@ -40,15 +40,17 @@ db.users.hasMany(db.orders)
 db.orders.belongsTo(db.users);
 
 // creating many to many relationship between transports and orders table
-db.transports.belongsToMany(db.orders, { through: 'db.orderTransports',foreignKey:'transportId' });
-db.orders.belongsToMany(db.transports, { through: 'db.orderTransports',foreignKey:'orderId' });
+db.transports.belongsToMany(db.orders, { through: db.orderTransports,foreignKey:'transportId' });
+db.orders.belongsToMany(db.transports, { through: db.orderTransports,foreignKey:'orderId' });
 
-
+// creating many to many relationship between order and product table
+db.products.belongsToMany(db.orders, { through: db.orderDetails,foreignKey:'productId' });
+db.orders.belongsToMany(db.products, { through: db.orderDetails,foreignKey:'orderId' });
 
 // creating many to many relationship between user and product table through productSupplier
 
 db.products.belongsToMany(db.users,{through:db.productSupplier,foreignKey:"productId"});
-db.users.belongsToMany(db.products,{through:db.productSupplier,foreignKey:"userId"});
+db.users.belongsToMany(db.products,{through:db.productSupplier,foreignKey:"userId"});  
  
 // creating many to many relationship between product and warehouse through Inventory
 

@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const { users } = require("../db");
 const { Op } = require("sequelize");
 
-
 exports.auth = async (req, res, next) => {
     try {
 
@@ -34,4 +33,6 @@ exports.auth = async (req, res, next) => {
     } catch (error) {
         console.log(error);
     }
-}
+
+  
+  } 
