@@ -13,12 +13,19 @@ const productCheck = (req, res) => {
 // Adding Product
 
 const addProduct = async (req, res) => {
+
+  const t = await db.sequelize.transaction();
+  console.log("Transaction Initiated");
   try {
-    const product = await Product.create(req.body);
+    const product = await Product.create(req.body,{transaction:t});
+    await t.commit();
+    console.log("Transaction Commited");
     return res
       .status(200)
       .json({ message: "Product added Successfully", product });
   } catch (error) {
+    await t.rollback();
+    console.log("Rollback Initiated");
     res.status(400).json(error);
   }
 };
@@ -26,11 +33,20 @@ const addProduct = async (req, res) => {
 // get product from product id
 
 const getProductById = async (req, res) => {
+  const t = await db.sequelize.transaction();
+  console.log("Transaction Initiated");
   const id = req.params.id;
   try {
-    const product = await Product.findByPk(id);
+    const product = await Product.findByPk(id,{transaction:t});
+    if(!product){
+      return res.status(200).json({"message":"No matching product found for the given id"});
+    }
+    await t.commit();
+    console.log("Transaction Commited");
     return res.status(200).json({ product });
   } catch (error) {
+    await t.rollback();
+    console.log("Rollback Initiated");
     return res.status(400).json(error);
   }
 };
@@ -38,6 +54,8 @@ const getProductById = async (req, res) => {
 // updating product from it's id
 
 const updateProductById = async (req, res) => {
+  const t = await db.sequelize.transaction();
+  console.log("Transaction Initiated");
   const id = req.params.id;
   const allowedOptions = ["name", "description", "category", "price", "weight"];
   const options = Object.keys(req.body);
@@ -63,10 +81,14 @@ const updateProductById = async (req, res) => {
       });
 
       await product.save();
+      await t.commit();
+      console.log("Transaction Commited");
       return res
         .status(200)
         .json({ message: "Product updated Successfully", product });
     } catch (error) {
+      await t.rollback();
+      console.log("Rollback Initiated");
       return res.status(400).json(error);
     }
   }
@@ -75,16 +97,22 @@ const updateProductById = async (req, res) => {
 // deleting product by its id
 
 const deleteProductById = async (req, res) => {
+  const t = await db.sequelize.transaction();
+  console.log("Transaction Initiated");
   const id = req.params.id;
   try {
-    const product = await Product.findByPk(id);
+    const product = await Product.findByPk(id,{transaction:t});
     if (!product) {
       return res.status(400).json({ message: "Product with given id not found" });
     }
 
     await product.destroy();
+    await t.commit();
+    console.log("Transaction Commited");
     return res.status(200).json({ message: "Product deleted Successfully" });
   } catch (error) {
+    await t.rollback();
+    console.log("Rollback Initiated");
     return res.status(400).json(error);
   }
 };
@@ -112,6 +140,10 @@ const orderArr = (temp) => {
 // retreiving products
 
 const getProducts = async (req, res) => {
+
+  const t = await db.sequelize.transaction();
+  console.log("Transaction initiated");
+
   // object containing query values in key-value pair
   const params = req.query;
 
@@ -185,15 +217,19 @@ const getProducts = async (req, res) => {
     const product = await Product.findAll({
       where: comp,
       order:orderList.length===0?"":[[orderList]],
-    }); 
+    },{transaction:t}); 
 
     if (product.length === 0) {
       return res
         .status(400)
         .json({ message: "No matching product found for the given query." });
     }
+    await t.commit();
+    console.log("Transaction Commited");
     return res.status(200).json({ product });
   } catch (error) {
+    await t.rollback();
+    console.log("Rollback Initiated");
     return res.status(400).json(error);
   }
 };

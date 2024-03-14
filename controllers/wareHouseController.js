@@ -12,12 +12,18 @@ const check = (req, res) => {
 
 // adding wareHouses
 const addWareHouses = async (req, res) => {
+  const t = await db.sequelize.transaction();
+  console.log("Transaction Initiated");
   try {
-    const wareHouse = await WareHouse.create(req.body);
+    const wareHouse = await WareHouse.create(req.body,{transaction:t});
+    await t.commit();
+    console.log("Transaction Commited");
     return res
       .status(200)
       .json({ message: "WareHouse added Successfully", wareHouse });
   } catch (error) {
+    await t.rollback();
+    console.log("Rollback Initiated");
     res.status(400).json(error);
   }
 };
@@ -25,11 +31,17 @@ const addWareHouses = async (req, res) => {
 // retreiving wareHouses by id
 
 const getWareHousesById = async (req, res) => {
+  const t = await db.sequelize.transaction();
+  console.log("Transaction Initiated");
   const id = req.params.id;
   try {
-    const wareHouse = await WareHouse.findByPk(id);
+    const wareHouse = await WareHouse.findByPk(id,{transaction:true});
+    await t.commit();
+    console.log("Transaction Commited");
     return res.status(200).json({ wareHouse });
   } catch (error) {
+    await t.rollback();
+    console.log("Rollback Initiated");
     return res.status(400).json(error);
   }
 };
@@ -37,6 +49,8 @@ const getWareHousesById = async (req, res) => {
 // updating wareHouses from their id's
 
 const updateWareHouse = async (req, res) => {
+  const t =await db.sequelize.transaction();
+  console.log("Transaction Initiated");
   const id = req.params.id;
   const allowedOptions = ["name", "location", "capacity"];
   const options = Object.keys(req.body);
@@ -51,7 +65,7 @@ const updateWareHouse = async (req, res) => {
       .json({ message: "Invalid feild added for updating data" });
   } else {
     try {
-      const wareHouse = await WareHouse.findByPk(id);
+      const wareHouse = await WareHouse.findByPk(id,{transaction:t});
       if (!wareHouse) {
         return res
           .status(400)
@@ -61,10 +75,14 @@ const updateWareHouse = async (req, res) => {
         wareHouse[option] = req.body[option];
       });
       await wareHouse.save();
+      await t.commit();
+      console.log("Transaction Commited");
       return res
         .status(200)
         .json({ message: "WareHouse updated Successfully", wareHouse });
     } catch (error) {
+      await t.rollback();
+      console.log("Rollback Initiated");
       return res.status(400).json(error);
     }
   }
