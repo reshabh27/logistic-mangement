@@ -11,8 +11,9 @@ const transportRouter = require("./routes/transportRoutes.js");
 const db = require("./db");
 const { wareHouseRouter } = require("./routes/wareHouseRoutes.js");
 const { inventoryRouter } = require("./routes/inventoryRoutes.js");
-
-require("./db");
+const relationRouter = require("./routes/relationshipRoutes.js");
+const orderTransportRouter = require("./routes/orderTransportRoutes.js");
+// require("./db");
 
 const app = express();
 
@@ -44,6 +45,9 @@ app.use("/orders", orderRouter);
 app.use("/user", userRoute);
 app.use("/products", productRouter);
 app.use("/transports", transportRouter);
+app.use("/relations", relationRouter);
+app.use("/orderTransport", orderTransportRouter);
+
 
 app.use("/wareHouse",wareHouseRouter);
 app.use("/inventory",inventoryRouter);
