@@ -1,23 +1,23 @@
 const { Op } = require("sequelize");
-const { User } = require("../db");
+const { users } = require("../db");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 
 
 // Controller for Signup
 exports.handleSignup = asyncErrorHandler(async (req, res) => {
     // Create a new user with the provided data
-    const user = await User.create(req.body);
+    const newUser = await users.create(req.body);
 
-    return res.status(201).json({ "message": "User registered successfully", user });
+    return res.status(201).json({ "message": "User registered successfully", newUser });
 })
 
 // Controller for Login
 exports.handleLogin = asyncErrorHandler(async (req, res) => {
     // Find the user by provided credentials and generate a token
-    const user = await User.findByCredentials(req.body.username, req.body.password);
-    if (!user)
+    const curUser = await users.findByCredentials(req.body.username, req.body.password);
+    if (!curUser)
         res.status(404).send({ message: "User not found" });
-    const token = await user.generateToken();
+    const token = await curUser.generateToken();
 
     res.status(200).send({ "message": "Login successful", token });
 })
@@ -36,7 +36,7 @@ exports.getAllUsers = asyncErrorHandler(async (req, res) => {
     let usernameOption = "";
     if (req.query?.username)
         usernameOption = req.query.username;
-
+    console.log(usernameOption);
     let sortByfield = [];
     const canSortFields = ["username", "role", "email", "contactName", "phone"];
     if (req.query?.sortBy) {
@@ -50,24 +50,24 @@ exports.getAllUsers = asyncErrorHandler(async (req, res) => {
         return res.status(403).send({ message: "You are not allowed to do this operation." });
 
     // Find all users based on role, username and order
-    const users = await User.findAll({
+    const allUsers = await users.findAll({
         where: {
             ...options,
             username: {
                 [Op.like]: `%${usernameOption}%`
             }
         },
-        order: [sortByfield]
+        order: sortByfield.length > 0 ? [[sortByfield[0], sortByfield[1]]] : []
     });
 
-    res.status(200).send({ users });
+    res.status(200).send({ allUsers });
 })
 
 
 
 // Controller for getting the current user profile
 exports.handleGetMe = asyncErrorHandler(async (req, res) => {
-    return res.send({ user: req.user });
+    return res.send({ user: req.curUser });
 })
 
 
@@ -85,18 +85,18 @@ exports.handleUpdateProfile = asyncErrorHandler(async (req, res) => {
     // Update user profile with the provided data
     for (const key in req.body) {
         if (Object.prototype.hasOwnProperty.call(req.body, key)) {
-            req.user[key] = req.body[key];
+            req.curUser[key] = req.body[key];
         }
     }
 
-    await req.user.save();
+    await req.curUser.save();
     return res.status(200).send({ "message": "Profile updated successfully", user: req.user })
 })
 
 
 // Controller for user logout
 exports.handleLogout = asyncErrorHandler(async (req, res) => {
-    const curruser = req.user;
+    const curruser = req.curUser;
     const currentTokens = JSON.parse(curruser.tokens);
 
     const isAvailable = currentTokens.some(ele => ele.token === req.token);
@@ -121,14 +121,14 @@ exports.handleUpdateUserRole = asyncErrorHandler(async (req, res) => {
 
     const userId = req.params.userId
 
-    await User.update(req.body, {
+    await users.update(req.body, {
         where: {
             id: userId
         }
     })
 
-    const user = await User.findByPk(userId)
-    return res.status(201).send({ "message": "User role updated successfully", user });
+    const curUser = await users.findByPk(userId)
+    return res.status(201).send({ "message": "User role updated successfully", curUser });
 })
 
 
@@ -139,7 +139,7 @@ exports.handleDeleteProfile = asyncErrorHandler(async (req, res) => {
 
     const userId = req.params.userId;
 
-    await User.destroy({
+    await users.destroy({
         where: {
             id: userId
         }
