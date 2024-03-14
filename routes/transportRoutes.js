@@ -1,0 +1,11 @@
+const express=require('express')
+const transportRouter=express.Router()
+const transportController=require('../controllers/transportController')
+transportRouter.get('/testTC',transportController.testTC)
+transportRouter.post('/addTransport',transportController.addTransports)
+transportRouter.get('/getTransport',transportController.getTranports)
+transportRouter.get('/getTransport/:id',transportController.getTransportById)
+transportRouter.delete('/deleteTransport/:id',transportController.deleteTransport)
+transportRouter.patch('/updateTransport/:id',transportController.updateTransport)
+transportRouter.get('/transportQuery',transportController.transportQuery)
+module.exports=transportRouter
