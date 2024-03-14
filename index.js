@@ -16,11 +16,10 @@ const orderTransportRouter = require("./routes/orderTransportRoutes.js");
 // require("./db");
 const dashboardRoute = require("./routes/dashboardRoute.js");
 
-
-
 const app = express();
 
-db.products.sync()
+db.products
+  .sync()
   .then(() => {
     console.log("resync product model");
   })
@@ -41,8 +40,6 @@ db.productSupplier
 
 app.use(express.json());
 
-
-
 app.use("/dashboard", dashboardRoute);
 
 app.use("/orders", orderRouter);
@@ -52,7 +49,6 @@ app.use("/products", productRouter);
 app.use("/transports", transportRouter);
 app.use("/relations", relationRouter);
 app.use("/orderTransport", orderTransportRouter);
-
 
 app.use("/wareHouse", wareHouseRouter);
 app.use("/inventory", inventoryRouter);
