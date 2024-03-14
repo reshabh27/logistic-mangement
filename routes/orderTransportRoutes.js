@@ -10,5 +10,10 @@ orderTransportRouter.patch(
   "/orders/:orderId/transport/:orderTransportId",
   orderTransportController.updateOrderTransport
 );
+orderTransportRouter.delete(
+    "/orders/:orderId/transport/:orderTransportId",
+    orderTransportController.deleteOrderTransport
+  );
+  
 
 module.exports = orderTransportRouter;

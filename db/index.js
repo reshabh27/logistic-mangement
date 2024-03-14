@@ -50,7 +50,7 @@ db.orders.belongsToMany(db.products, { through: db.orderDetails,foreignKey:'orde
 // creating many to many relationship between user and product table through productSupplier
 
 db.products.belongsToMany(db.users,{through:db.productSupplier,foreignKey:"productId"});
-db.users.belongsToMany(db.products,{through:db.productSupplier,foreignKey:"userId"});
+db.users.belongsToMany(db.products,{through:db.productSupplier,foreignKey:"userId"});  
  
 // creating many to many relationship between product and warehouse through Inventory
 

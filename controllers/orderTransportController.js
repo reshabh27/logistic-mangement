@@ -58,4 +58,41 @@ const updateOrderTransport = async (req, res) => {
   }
 };
 
-module.exports = { addOrderTransport, updateOrderTransport };
+const deleteOrderTransport = async (req, res) => {
+  try {
+    const order = await Order.findOne({
+      where: {
+        orderId: req.params.orderId,
+      },
+    });
+    const data = await orderTransport.findOne({
+      where: {
+        orderTransportId: req.params.orderTransportId,
+      },
+    });
+    if (!data || !order) {
+      return res.status(404).json({
+        message: "Sorry we could not find the details of which you are need of",
+      });
+    } else {
+      await orderTransport.destroy({
+        where: {
+          orderTransportId: req.params.orderTransportId,
+        },
+      });
+    }
+    res.status(200).json({
+      message: "deleted successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+};
+
+module.exports = {
+  addOrderTransport,
+  updateOrderTransport,
+  deleteOrderTransport,
+};
