@@ -13,6 +13,9 @@ const check = (req, res) => {
 // adding wareHouses
 const addWareHouses = async (req, res) => {
   try {
+    if (req.role !== 'Admin')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const wareHouse = await WareHouse.create(req.body);
     return res
       .status(200)
@@ -27,6 +30,9 @@ const addWareHouses = async (req, res) => {
 const getWareHousesById = async (req, res) => {
   const id = req.params.id;
   try {
+    if (req.role !== 'Admin' && req.role !== 'Warehouse Manager')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const wareHouse = await WareHouse.findByPk(id);
     return res.status(200).json({ wareHouse });
   } catch (error) {
@@ -37,6 +43,9 @@ const getWareHousesById = async (req, res) => {
 // updating wareHouses from their id's
 
 const updateWareHouse = async (req, res) => {
+  if (req.role !== 'Admin')
+    return res.status(400).send({ message: "you are not allowed to do this operation." })
+
   const id = req.params.id;
   const allowedOptions = ["name", "location", "capacity"];
   const options = Object.keys(req.body);
@@ -75,6 +84,9 @@ const updateWareHouse = async (req, res) => {
 const deleteWareHouse = async (req, res) => {
   const id = req.params.id;
   try {
+    if (req.role !== 'Admin')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const wareHouse = await WareHouse.findByPk(id);
     if (!wareHouse) {
       return res
@@ -91,6 +103,10 @@ const deleteWareHouse = async (req, res) => {
 // retriving wareHouse filtering and sorting
 
 const getWareHouse = async (req, res) => {
+
+  if (req.role !== 'Admin' && req.role !== 'Warehouse Manager')
+    return res.status(400).send({ message: "you are not allowed to do this operation." })
+
   // object containing query values in key-value pair
   const params = req.query;
 
@@ -174,6 +190,9 @@ const getWareHouse = async (req, res) => {
 const specificWareHouseInventory = async (req, res) => {
   const id = req.params.id;
   try {
+    if (req.role !== 'Admin' && req.role !== 'Warehouse Manager')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const inventory = await WareHouse.findAll({
       where: { id },
       include: [{ model: Product }],
@@ -192,6 +211,10 @@ const specificWareHouseInventory = async (req, res) => {
 // update the quantity of an inventory item in a warehouse.
 
 const updateInventoryWareHouse = async (req, res) => {
+
+  if (req.role !== 'Warehouse Manager')
+    return res.status(400).send({ message: "you are not allowed to do this operation." })
+
   const { wareHouseId, inventoryId } = req.params;
   const allowedOptions = ["quantity"];
   const options = Object.keys(req.body);
@@ -219,7 +242,7 @@ const updateInventoryWareHouse = async (req, res) => {
         inventory[option] = req.body[option];
       });
       await inventory.save();
-      return res.status(200).json({"message":"Inventory updated successfully", inventory });
+      return res.status(200).json({ "message": "Inventory updated successfully", inventory });
     } catch (error) {
       return res.status(400).json(error);
     }

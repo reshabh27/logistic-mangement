@@ -6,6 +6,9 @@ const testTC = async (req, res) => {
 };
 const addTransports = async (req, res) => {
   try {
+    if (req.role !== 'Admin')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const postData = req.body;
     let transport;
     if (postData.length > 1) {
@@ -22,10 +25,13 @@ const addTransports = async (req, res) => {
     });
   }
 };
+
 const getTranports = async (req, res) => {
   try {
+    if (req.role !== 'Admin' && req.role !== 'Transport Manager')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const transport = await Transport.findAll({});
-    res.send(transport);
     res.status(200).json({
       data: transport,
     });
@@ -35,8 +41,12 @@ const getTranports = async (req, res) => {
     });
   }
 };
+
 const getTransportById = async (req, res) => {
   try {
+    if (req.role !== 'Admin' && req.role !== 'Transport Manager')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const transport = await Transport.findOne({
       where: {
         transportId: req.params.id,
@@ -56,8 +66,12 @@ const getTransportById = async (req, res) => {
     });
   }
 };
+
 const deleteTransport = async (req, res) => {
   try {
+    if (req.role !== 'Admin')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const transport = await Transport.findOne({
       where: {
         transportId: req.params.id,
@@ -83,8 +97,12 @@ const deleteTransport = async (req, res) => {
     });
   }
 };
+
 const updateTransport = async (req, res) => {
   try {
+    if (req.role !== 'Admin')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const transport = await Transport.findOne({
       where: {
         transportId: req.params.id,
@@ -110,8 +128,12 @@ const updateTransport = async (req, res) => {
     });
   }
 };
+
 const transportQuery = async (req, res) => {
   try {
+    if (req.role !== 'Admin')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const {
       page = 1,
       limit = 5,
