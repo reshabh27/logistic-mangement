@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       orderTransportId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
+        
       },
       orderId: {
         type: DataTypes.INTEGER,
