@@ -25,7 +25,7 @@ const addTransports = async (req, res) => {
 const getTranports = async (req, res) => {
   try {
     const transport = await Transport.findAll({});
-    res.send(transport)
+    res.send(transport);
     res.status(200).json({
       data: transport,
     });
@@ -117,19 +117,37 @@ const transportQuery = async (req, res) => {
       limit = 5,
       orderBy = "transportId",
       sortBy = "desc",
-      keyword,
+      type,
+      minCapacity,
+      maxCapacity,
     } = req.query;
+
     const offset = (page - 1) * limit;
-    const whereClause = keyword
-      ? { type: { [Sequelize.Op.like]: `${keyword}` } }
-      : {};
+
+    // Define the base where clause
+    const whereClause = {};
+
+    // Add status condition if provided
+    if (type) {
+      whereClause.type = type;
+    }
+
+    // Add capacity range condition if provided
+    if (minCapacity !== undefined && maxCapacity !== undefined) {
+      whereClause.capacity = {
+        [Sequelize.Op.between]: [minCapacity, maxCapacity],
+      };
+    }
+
     const order = [[orderBy, sortBy.toUpperCase()]];
+
     const transports = await Transport.findAll({
       where: whereClause,
       limit: +limit,
       offset: offset,
       order,
     });
+
     res.status(200).json({
       data: transports,
     });
