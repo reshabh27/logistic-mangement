@@ -66,6 +66,7 @@ db.orders.sync({ force: false })
 db.transports.sync({ force: false })
 db.orderTransports.sync({ force: false })
 db.users.sync({ alter: false })
+
 db.orderDetails.sync({ force: false })
 
 db.warehouses.sync({ force: false }).then(() => { console.log("resyncing warehouses model") }).catch((err) => { console.log(err) });
@@ -84,5 +85,6 @@ sequelize.sync().then(() => {
 }).catch((e) => {
     console.log("there is an error while synching", e);
 })
+
 
 module.exports = db;
