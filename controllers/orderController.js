@@ -1,6 +1,7 @@
 const db = require("../db/index");
 const Order = db.orders;
 const User = db.users;
+const OrderDetails = db.orderDetails;
 const { Sequelize } = require("sequelize");
 const testOrder = async (req, res) => {
   res.send("Order is working");
@@ -194,6 +195,19 @@ const manyToOne = async (req, res) => {
     });
   }
 };
+
+// pushing data inside order details
+
+const addOrderDetails = async(req,res) => {
+  try {
+    const orderDetails = await OrderDetails.create(req.body);
+    return res.status(200).json({orderDetails});
+  } catch (error) {
+    return res.status(400).json({error});
+  }
+}
+
+
 module.exports = {
   testOrder,
   addOrder,
@@ -203,4 +217,5 @@ module.exports = {
   updateOrder,
   searchAndSort,
   manyToOne,
+  addOrderDetails
 };

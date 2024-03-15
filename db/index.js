@@ -62,6 +62,19 @@ db.warehouses.belongsToMany(db.orders, { through: db.orderWarehouses, foreignKey
 db.orders.belongsToMany(db.warehouses, { through: db.orderWarehouses });
 db.warehouses.belongsToMany(db.orders, { through: db.orderWarehouses });
 
+// creating many to one relationship between product and orderDetails
+db.products.hasMany(db.orderDetails,{foreignKey:"productId"});
+db.orderDetails.belongsTo(db.products);
+
+//creating many to one relationship between WareHouse and Inventory
+db.warehouses.hasMany(db.inventory,{foreignKey:"wareHouseId"});
+db.inventory.belongsTo(db.warehouses);
+
+//creating many to one relationship between Product and Inventory
+db.products.hasMany(db.inventory,{foreignKey:"productId"});
+db.inventory.belongsTo(db.products);
+
+
 db.orders.sync({ force: false })
 db.transports.sync({ force: false })
 db.orderTransports.sync({ force: false })
@@ -87,4 +100,8 @@ sequelize.sync().then(() => {
 })
 
 
+db.warehouses.sync({force:false}).then(()=>{console.log("resyncing warehouses model")}).catch((err)=>{console.log(err)});
+db.orderWarehouses.sync({force:false}).then(()=>{console.log("resyncing orderWarehouses model")}).catch((err)=>{console.log(err)});
+db.inventory.sync({force:false}).then(()=>{console.log("resyncing inventory model")}).catch((err)=>{console.log(err)});
+db.orderDetails.sync({force:false}).then(()=>{console.log("resyncing orderDetails model")}).catch((err)=>{console.log(err)});
 module.exports = db;
