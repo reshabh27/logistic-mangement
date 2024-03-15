@@ -1,7 +1,23 @@
 const express = require("express");
-const { check, addWareHouses, getWareHousesById, updateWareHouse, deleteWareHouse, getWareHouse, specificWareHouseInventory, updateInventoryWareHouse } = require("../controllers/wareHouseController");
+const { check, addWareHouses, getWareHousesById, updateWareHouse, deleteWareHouse, getWareHouse, specificWareHouseInventory, updateInventoryWareHouse} = require("../controllers/wareHouseController");
+const { countWareHouses, inventoryLevels, utilizedWareHouse, belowReorderProduct } = require("../controllers/DashboardController/wareHouseDashController");
 
 const wareHouseRouter = express.Router();
+
+//DashBoar Routes
+
+// Display the total number of warehouses.
+
+wareHouseRouter.get("/countAll",countWareHouses)
+
+// Show current inventory levels in each warehouse.
+wareHouseRouter.get("/listLevels",inventoryLevels);
+
+// utilized capacity of each wareHouses
+wareHouseRouter.get("/capacity",utilizedWareHouse);
+
+// List items that are below the reorder level.
+wareHouseRouter.get("/reorder",belowReorderProduct);
 
 // route for checking 
 wareHouseRouter.get("/check",check);
@@ -26,5 +42,8 @@ wareHouseRouter.get("/:id/inventory",specificWareHouseInventory);
 
 //  route for updating the quantity of an inventory item in a warehouse.
 wareHouseRouter.patch("/:wareHouseId/inventory/:inventoryId",updateInventoryWareHouse);
+
+
+
 
 module.exports = {wareHouseRouter};

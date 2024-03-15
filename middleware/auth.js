@@ -1,27 +1,38 @@
 const jwt = require("jsonwebtoken");
-const asyncErrorHandler = require("../utils/asyncErrorHandler");
-const { User } = require("../db");
-
+const { users } = require("../db");
+const { Op } = require("sequelize");
 
 exports.auth = async (req, res, next) => {
     try {
 
-        const token = await req.header('Authorization').replace('Bearer ', '')
+        const token = await req.header('Authorization')?.replace('Bearer ', '')
         // console.log("token", token);
+        if (!token)
+            return res.status(400).send({ message: "Please Authenticate first." })
         const decoded = jwt.verify(token, "my_secret")
-        const user = await User.findOne({ id: decoded.id, 'tokens.token': token })
+        const curUser = await users.findOne({
+            where: {
+                id: decoded.id,
+                tokens: {
+                    [Op.like]: `%${token}%`
+                }
+            }
+        })
         // console.log("decoded", decoded);
-        // console.log("user", user);
-        if (!user) {
-            throw new Error()
+        // console.log("user", curUser);
+        if (!curUser) {
+            return res.status(400).send({ message: "Please authenticate first." })
+            // throw new Error()
         }
 
         req.token = token
-        req.user = user
+        req.curUser = curUser
         req.role = decoded.role
         // console.log(user);
         next();
     } catch (error) {
         console.log(error);
     }
-}
+
+  
+  } 

@@ -244,6 +244,8 @@ const updateInventoryWareHouse = async (req, res) => {
   }
 };
 
+
+
 module.exports = {
   check,
   addWareHouses,

@@ -1,4 +1,3 @@
-
 const { Op } = require("sequelize");
 const db = require("../db");
 const Product = db.products;
@@ -13,10 +12,12 @@ const productCheck = (req, res) => {
 // Adding Product
 
 const addProduct = async (req, res) => {
-
   const t = await db.sequelize.transaction();
   console.log("Transaction Initiated");
   try {
+    // checking user role 
+    if (req.role !== "Supplier")
+      return res.status(403).send({ message: "You are not allowed to do this operation." })
     const product = await Product.create(req.body,{transaction:t});
     await t.commit();
     console.log("Transaction Commited");
@@ -35,11 +36,21 @@ const addProduct = async (req, res) => {
 const getProductById = async (req, res) => {
   const t = await db.sequelize.transaction();
   console.log("Transaction Initiated");
+  // checking if cuurent user is from Admin, Supplier, Customer roles
+  const allowedRoles = ["Admin", "Supplier", "Customer"];
+  const isAllowed = allowedRoles.includes(req.role);
+  if (!isAllowed)
+    return res
+      .status(403)
+      .send({ message: "You are not allowed to do this operation." });
+
   const id = req.params.id;
   try {
-    const product = await Product.findByPk(id,{transaction:t});
-    if(!product){
-      return res.status(200).json({"message":"No matching product found for the given id"});
+    const product = await Product.findByPk(id, { transaction: t });
+    if (!product) {
+      return res
+        .status(200)
+        .json({ message: "No matching product found for the given id" });
     }
     await t.commit();
     console.log("Transaction Commited");
@@ -56,6 +67,12 @@ const getProductById = async (req, res) => {
 const updateProductById = async (req, res) => {
   const t = await db.sequelize.transaction();
   console.log("Transaction Initiated");
+  // checking user role
+  if (req.role !== "Supplier")
+    return res
+      .status(403)
+      .send({ message: "You are not allowed to do this operation." });
+
   const id = req.params.id;
   const allowedOptions = ["name", "description", "category", "price", "weight"];
   const options = Object.keys(req.body);
@@ -99,11 +116,19 @@ const updateProductById = async (req, res) => {
 const deleteProductById = async (req, res) => {
   const t = await db.sequelize.transaction();
   console.log("Transaction Initiated");
+  // checking user role
+  if (req.role !== "Supplier")
+    return res
+      .status(403)
+      .send({ message: "You are not allowed to do this operation." });
+
   const id = req.params.id;
   try {
-    const product = await Product.findByPk(id,{transaction:t});
+    const product = await Product.findByPk(id, { transaction: t });
     if (!product) {
-      return res.status(400).json({ message: "Product with given id not found" });
+      return res
+        .status(400)
+        .json({ message: "Product with given id not found" });
     }
 
     await product.destroy();
@@ -117,32 +142,33 @@ const deleteProductById = async (req, res) => {
   }
 };
 
-
-
 const orderArr = (temp) => {
-    const arr = temp?.split('_')||[];
-    if((arr[0]?.trim() !== '' && arr[1]?.trim() !== '')&&(arr.length === 2)){
-        if(arr[1] === 'asc'){
-            return [arr[0],'ASC'];
-        }
-        else if (arr[1] === 'desc'){
-            return [arr[0],'DESC'];
-        }
-        else{
-            return ["error"];
-        }
+  const arr = temp?.split("_") || [];
+  if (arr[0]?.trim() !== "" && arr[1]?.trim() !== "" && arr.length === 2) {
+    if (arr[1] === "asc") {
+      return [arr[0], "ASC"];
+    } else if (arr[1] === "desc") {
+      return [arr[0], "DESC"];
+    } else {
+      return ["error"];
     }
-    else{
-        return [];
-    }
-}
+  } else {
+    return [];
+  }
+};
 
 // retreiving products
 
 const getProducts = async (req, res) => {
-
   const t = await db.sequelize.transaction();
   console.log("Transaction initiated");
+  // checking if cuurent user is from Admin, Supplier, Customer roles
+  const allowedRoles = ["Admin", "Supplier", "Customer"];
+  const isAllowed = allowedRoles.includes(req.role);
+  if (!isAllowed)
+    return res
+      .status(403)
+      .send({ message: "You are not allowed to do this operation." });
 
   // object containing query values in key-value pair
   const params = req.query;
@@ -184,7 +210,7 @@ const getProducts = async (req, res) => {
       } else {
         validParams[key] = params[key];
       }
-    } 
+    }
   }
 
   // comparator obeject for querying the products table
@@ -207,17 +233,20 @@ const getProducts = async (req, res) => {
   const orderList = orderArr(params.sortBy);
   console.log(orderList);
 
-  if(orderList[0] === 'error'){
+  if (orderList[0] === "error") {
     return res
-    .status(400)
-    .json({ message: "Invalid sortBy query added for filtering products" });
+      .status(400)
+      .json({ message: "Invalid sortBy query added for filtering products" });
   }
 
   try {
-    const product = await Product.findAll({
-      where: comp,
-      order:orderList.length===0?"":[[orderList]],
-    },{transaction:t}); 
+    const product = await Product.findAll(
+      {
+        where: comp,
+        order: orderList.length === 0 ? "" : [[orderList]],
+      },
+      { transaction: t }
+    );
 
     if (product.length === 0) {
       return res
@@ -235,11 +264,11 @@ const getProducts = async (req, res) => {
 };
 
 module.exports = {
-  productCheck,
+  productCheck, 
   addProduct,
   getProductById,
   updateProductById,
   deleteProductById,
   getProducts,
-  orderArr
+  orderArr,
 };
