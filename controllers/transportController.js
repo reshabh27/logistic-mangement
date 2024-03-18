@@ -4,6 +4,7 @@ const Transport = db.transports;
 const testTC = async (req, res) => {
   res.send("transport is working");
 };
+
 const addTransports = async (req, res) => {
   try {
     // if ((req.role !== 'Admin') && (req.role !== "Super Admin"))
@@ -79,7 +80,7 @@ const deleteTransport = async (req, res) => {
       },
     });
     if (!transport) {
-      res.status(404).json({
+      return res.status(404).json({
         message: `transport with id ${req.params.id} is not found`,
       });
     } else {
