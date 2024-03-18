@@ -15,10 +15,10 @@ const addWareHouses = async (req, res) => {
   const t = await db.sequelize.transaction();
   console.log("Transaction Initiated");
   try {
-    const wareHouse = await WareHouse.create(req.body,{transaction:t});
+    const wareHouse = await WareHouse.create(req.body, { transaction: t });
     await t.commit();
     console.log("Transaction Commited");
-    if (req.role !== 'Admin')
+    if ((req.role !== 'Admin') && (req.role !== "Super Admin"))
       return res.status(400).send({ message: "you are not allowed to do this operation." })
     return res
       .status(200)
@@ -37,10 +37,10 @@ const getWareHousesById = async (req, res) => {
   console.log("Transaction Initiated");
   const id = req.params.id;
   try {
-    const wareHouse = await WareHouse.findByPk(id,{transaction:true});
+    const wareHouse = await WareHouse.findByPk(id, { transaction: true });
     await t.commit();
     console.log("Transaction Commited");
-    if (req.role !== 'Admin' && req.role !== 'Warehouse Manager')
+    if ((req.role !== 'Admin') && (req.role !== 'Warehouse Manager') && (req.role !== "Super Admin"))
       return res.status(400).send({ message: "you are not allowed to do this operation." })
 
     return res.status(200).json({ wareHouse });
@@ -54,9 +54,9 @@ const getWareHousesById = async (req, res) => {
 // updating wareHouses from their id's
 
 const updateWareHouse = async (req, res) => {
-  const t =await db.sequelize.transaction();
+  const t = await db.sequelize.transaction();
   console.log("Transaction Initiated");
-  if (req.role !== 'Admin')
+  if ((req.role !== 'Admin') && (req.role !== "Super Admin"))
     return res.status(400).send({ message: "you are not allowed to do this operation." })
 
   const id = req.params.id;
@@ -73,7 +73,7 @@ const updateWareHouse = async (req, res) => {
       .json({ message: "Invalid feild added for updating data" });
   } else {
     try {
-      const wareHouse = await WareHouse.findByPk(id,{transaction:t});
+      const wareHouse = await WareHouse.findByPk(id, { transaction: t });
       if (!wareHouse) {
         return res
           .status(400)
@@ -101,7 +101,7 @@ const updateWareHouse = async (req, res) => {
 const deleteWareHouse = async (req, res) => {
   const id = req.params.id;
   try {
-    if (req.role !== 'Admin')
+    if ((req.role !== 'Admin') && (req.role !== "Super Admin"))
       return res.status(400).send({ message: "you are not allowed to do this operation." })
 
     const wareHouse = await WareHouse.findByPk(id);
@@ -121,7 +121,7 @@ const deleteWareHouse = async (req, res) => {
 
 const getWareHouse = async (req, res) => {
 
-  if (req.role !== 'Admin' && req.role !== 'Warehouse Manager')
+  if ((req.role !== 'Admin') && (req.role !== 'Warehouse Manager') && (req.role !== "Super Admin"))
     return res.status(400).send({ message: "you are not allowed to do this operation." })
 
   // object containing query values in key-value pair
@@ -207,7 +207,7 @@ const getWareHouse = async (req, res) => {
 const specificWareHouseInventory = async (req, res) => {
   const id = req.params.id;
   try {
-    if (req.role !== 'Admin' && req.role !== 'Warehouse Manager')
+    if ((req.role !== 'Admin') && (req.role !== 'Warehouse Manager') && (req.role !== "Super Admin"))
       return res.status(400).send({ message: "you are not allowed to do this operation." })
 
     const inventory = await WareHouse.findAll({
@@ -229,7 +229,7 @@ const specificWareHouseInventory = async (req, res) => {
 
 const updateInventoryWareHouse = async (req, res) => {
 
-  if (req.role !== 'Warehouse Manager')
+  if ((req.role !== 'Warehouse Manager') && (req.role !== "Super Admin"))
     return res.status(400).send({ message: "you are not allowed to do this operation." })
 
   const { wareHouseId, inventoryId } = req.params;
