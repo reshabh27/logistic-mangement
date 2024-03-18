@@ -6,6 +6,9 @@ const testTC = async (req, res) => {
 };
 const addTransports = async (req, res) => {
   try {
+    if (req.role !== 'Admin')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const postData = req.body;
     let transport;
     if (postData.length > 1) {
@@ -22,10 +25,13 @@ const addTransports = async (req, res) => {
     });
   }
 };
+
 const getTranports = async (req, res) => {
   try {
+    if (req.role !== 'Admin' && req.role !== 'Transport Manager')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const transport = await Transport.findAll({});
-    res.send(transport)
     res.status(200).json({
       data: transport,
     });
@@ -35,8 +41,12 @@ const getTranports = async (req, res) => {
     });
   }
 };
+
 const getTransportById = async (req, res) => {
   try {
+    if (req.role !== 'Admin' && req.role !== 'Transport Manager')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const transport = await Transport.findOne({
       where: {
         transportId: req.params.id,
@@ -56,8 +66,12 @@ const getTransportById = async (req, res) => {
     });
   }
 };
+
 const deleteTransport = async (req, res) => {
   try {
+    if (req.role !== 'Admin')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const transport = await Transport.findOne({
       where: {
         transportId: req.params.id,
@@ -83,8 +97,12 @@ const deleteTransport = async (req, res) => {
     });
   }
 };
+
 const updateTransport = async (req, res) => {
   try {
+    if (req.role !== 'Admin')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const transport = await Transport.findOne({
       where: {
         transportId: req.params.id,
@@ -110,26 +128,48 @@ const updateTransport = async (req, res) => {
     });
   }
 };
+
 const transportQuery = async (req, res) => {
   try {
+    if (req.role !== 'Admin')
+      return res.status(400).send({ message: "you are not allowed to do this operation." })
+
     const {
       page = 1,
       limit = 5,
       orderBy = "transportId",
       sortBy = "desc",
-      keyword,
+      type,
+      minCapacity,
+      maxCapacity,
     } = req.query;
+
     const offset = (page - 1) * limit;
-    const whereClause = keyword
-      ? { type: { [Sequelize.Op.like]: `${keyword}` } }
-      : {};
+
+    // Define the base where clause
+    const whereClause = {};
+
+    // Add status condition if provided
+    if (type) {
+      whereClause.type = type;
+    }
+
+    // Add capacity range condition if provided
+    if (minCapacity !== undefined && maxCapacity !== undefined) {
+      whereClause.capacity = {
+        [Sequelize.Op.between]: [minCapacity, maxCapacity],
+      };
+    }
+
     const order = [[orderBy, sortBy.toUpperCase()]];
+
     const transports = await Transport.findAll({
       where: whereClause,
       limit: +limit,
       offset: offset,
       order,
     });
+
     res.status(200).json({
       data: transports,
     });
