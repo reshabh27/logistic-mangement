@@ -8,7 +8,7 @@ const { auth } = require('../middleware/auth');
 const router = new express.Router();
 
 //  User route for retreiving all users - (Admin only)
-router.get('/', auth, getAllUsers);
+router.get('/getAllUsers', auth, getAllUsers);
 
 // User route for SignUp
 router.post('/signup', handleSignup);
