@@ -140,18 +140,34 @@ const searchAndSort = async (req, res) => {
   const {
     page = 1,
     limit = 2,
-    orderBy = "userId",
+    orderBy = "orderDate",
     sortBy = "asc",
     keyword,
+    customerId,
+    status,
+    orderDate,deliveryDate
   } = req.query;
 
   // Calculate offset for pagination
   const offset = (page - 1) * limit;
 
   // Build the where clause for search
-  const whereClause = keyword
-    ? { status: { [Sequelize.Op.like]: `%${keyword}%` } }
-    : {};
+  // const whereClause = keyword
+  //   ? { status: { [Sequelize.Op.like]: `%${keyword}%` } }
+  //   : {};
+  const whereClause={}
+  if(customerId){
+    whereClause.customerId=customerId
+  }
+  if(orderDate){
+    whereClause.orderDate=orderDate
+  }
+  if(deliveryDate){
+    whereClause.deliveryDate=deliveryDate
+  }
+  if(status){
+    whereClause.status=status
+  }
 
   // Build the order array for sorting
   const order = [[orderBy, sortBy.toUpperCase()]];
