@@ -33,13 +33,12 @@ db.inventory = require("../models/inventory.js")(sequelize, DataTypes);
 db.orderTransports = require('../models/orderTransport.js')(sequelize, DataTypes);
 
 // creating many to one relationship between orders and users table
-// db.users.hasMany(db.orders)
-// db.orders.belongsTo(db.users);
+db.users.hasMany(db.orders)
+db.orders.belongsTo(db.users);
 
 // creating many to many relationship between transports and orders table
 db.transports.belongsToMany(db.orders, { through: 'db.orderTransports', foreignKey: 'transportId' });
 db.orders.belongsToMany(db.transports, { through: 'db.orderTransports', foreignKey: 'orderId' });
-
 
 
 // creating many to many relationship between user and product table through productSupplier
