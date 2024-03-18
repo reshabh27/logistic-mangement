@@ -25,7 +25,7 @@ const addTransports = async (req, res) => {
 const getTranports = async (req, res) => {
   try {
     const transport = await Transport.findAll({});
-    res.send(transport);
+    // res.send(transport);
     res.status(200).json({
       data: transport,
     });
