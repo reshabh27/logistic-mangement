@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       validate: {
         isIn: {
-          args: [["Admin", "Supplier", "Customer", "Warehouse Manager", "Transport Manager"]],
+          args: [["Super Admin", "Admin", "Supplier", "Customer", "Warehouse Manager", "Transport Manager"]],
           msg: "Please select role from Admin, Supplier, Customer, Warehouse Manager, Transport Manager",
         },
       },
@@ -55,6 +55,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       defaultValue: "[]",
       allowNull: false
+    },
+    loginData: {
+      type: DataTypes.TEXT,
+      defaultValue: "[]",
     }
   });
 
@@ -81,8 +85,13 @@ module.exports = (sequelize, DataTypes) => {
   User.prototype.generateToken = async function () {
     let user = this;
 
+    // Update loginData with current login time
+    let loginData = JSON.parse(user.loginData || "[]");
+    loginData.push({ time: new Date() }); // Add current login time
+    user.loginData = JSON.stringify(loginData);
+
     // generating token using jsonwebtoken
-    const token = jwt.sign({ id: user.id.toString(), role: user.role }, "my_secret");
+    const token = jwt.sign({ id: user.id.toString(), role: user.role }, process.env.JWT_SECRET);
     let tokens = JSON.parse(user.tokens || "[]");
     tokens.push({ token });
     user.tokens = JSON.stringify(tokens);

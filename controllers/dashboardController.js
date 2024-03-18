@@ -1,8 +1,8 @@
 // const { QueryTypes } = require("sequelize");
-const { users, sequelize, orders, transports,orderTransports } = require("../db");
+const { users, sequelize, orders, transports, orderTransports } = require("../db");
 const { QueryTypes } = require("sequelize");
 
-exports.handleAdminDashboard = async (req, res) => {
+const handleAdminDashboard = async (req, res) => {
   try {
     // count of total no of user
     const totalUsers = await users.count({});
@@ -28,23 +28,25 @@ exports.handleAdminDashboard = async (req, res) => {
       limit: 2,
     });
     // console.log("recentRegistrations", recentRegistrations);
-    return res
-      .status(200)
-      .send({
-        message: "Success",
-        totalUsers,
-        usersByRole,
-        recentRegistrations,
-      });
+
+
+    const userActivity = JSON.parse(req.curUser.loginData || "[]");
+
+
+    return res.status(200).send({
+      message: "Success",
+      totalUsers,
+      usersByRole,
+      recentRegistrations,
+      userActivity
+    });
   } catch (error) {
     console.log(error);
-    res
-      .status(400)
-      .send({
-        message: "there is some error occured. please try again later.",
-      });
+    res.status(400).send({ message: "there is some error occured. please try again later." });
   }
 };
+
+
 const handleOrderDashboard = async (req, res) => {
   try {
     const totalOrders = await orders.count({});
@@ -73,21 +75,21 @@ const handleTransportDashboard = async (req, res) => {
       { type: QueryTypes.SELECT }
     );
     const costAnalysis = await sequelize.query(
-        `SELECT t.type, DATE(t.createdAt) AS date, SUM(t.costPerMile * d.distance) AS total_cost
+      `SELECT t.type, DATE(t.createdAt) AS date, SUM(t.costPerMile * d.distance) AS total_cost
         FROM transports t
         JOIN orderTransports d ON t.transportId = d.transportId
         GROUP BY t.type, DATE(t.createdAt)
         ORDER BY date;`,
-        { type: QueryTypes.SELECT }
+      { type: QueryTypes.SELECT }
     );
     res.status(200).json({
-        totalTransports,
-        transportUsage,
-        costAnalysis
+      totalTransports,
+      transportUsage,
+      costAnalysis
     })
   } catch (err) {
     res.status(400).send({ message: err.message });
   }
 };
 
-module.exports = { handleOrderDashboard, handleTransportDashboard };
+module.exports = { handleAdminDashboard, handleOrderDashboard, handleTransportDashboard };

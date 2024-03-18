@@ -13,30 +13,16 @@ const { wareHouseRouter } = require("./routes/wareHouseRoutes.js");
 const { inventoryRouter } = require("./routes/inventoryRoutes.js");
 const relationRouter = require("./routes/relationshipRoutes.js");
 const orderTransportRouter = require("./routes/orderTransportRoutes.js");
-// require("./db");
+
 const dashboardRoute = require("./routes/dashboardRoute.js");
 
 const app = express();
 
-db.products
-  .sync()
-  .then(() => {
-    console.log("resync product model");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+
 
 app.use(express.json());
 
-db.productSupplier
-  .sync()
-  .then(() => {
-    console.log("resync productSupplier model");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+
 
 app.use(express.json());
 

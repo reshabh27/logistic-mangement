@@ -1,16 +1,15 @@
 const db = require("../db/index");
 const Order = db.orders;
 const User = db.users;
+const OrderDetails = db.orderDetails;
 const { Sequelize } = require("sequelize");
 const testOrder = async (req, res) => {
   res.send("Order is working");
 };
 const addOrder = async (req, res) => {
   try {
-    if (req.role !== "Customer")
-      return res
-        .status(403)
-        .send({ message: "Only customers can request orders." });
+    if ((req.role !== "Customer") && (req.role !== "Super Admin"))
+      return res.status(403).send({ message: "Only customers can request orders." })
     const order = await Order.create(req.body);
     res.status(201).json({
       status: "success",
@@ -22,7 +21,7 @@ const addOrder = async (req, res) => {
 };
 const getOrder = async (req, res) => {
   try {
-    const permitedRoles = ["Admin", "Customer", "Warehouse Manager"];
+    const permitedRoles = ["Admin", "Customer", "Warehouse Manager", "Super Admin"];
     if (!permitedRoles.includes(req.role))
       res.status(403).send({
         message: "your type of roles are not permited to access this.",
@@ -41,7 +40,7 @@ const getOrder = async (req, res) => {
 };
 const getOrderById = async (req, res) => {
   try {
-    const permitedRoles = ["Admin", "Customer", "Warehouse Manager"];
+    const permitedRoles = ["Admin", "Customer", "Warehouse Manager", "Super Admin"];
     if (!permitedRoles.includes(req.role))
       return res.status(403).send({
         message: "your type of roles are not permited to access this.",
@@ -74,7 +73,7 @@ const getOrderById = async (req, res) => {
 };
 const deleteOrder = async (req, res) => {
   try {
-    if (req.role !== "Admin")
+    if ((req.role !== "Admin") && (req.role !== "Super Admin"))
       return res
         .status(403)
         .send({ message: "You are not allowed to do this operation." });
@@ -106,7 +105,7 @@ const deleteOrder = async (req, res) => {
 };
 const updateOrder = async (req, res) => {
   try {
-    if (req.role !== "Admin" && req.role !== "Warehouse Manager")
+    if ((req.role !== "Admin") && (req.role !== "Warehouse Manager") && (req.role !== "Super Admin"))
       return res
         .status(403)
         .send({ message: "You are not allowed to do this operation." });
@@ -192,6 +191,19 @@ const manyToOne = async (req, res) => {
     });
   }
 };
+
+// pushing data inside order details
+
+const addOrderDetails = async (req, res) => {
+  try {
+    const orderDetails = await OrderDetails.create(req.body);
+    return res.status(200).json({ orderDetails });
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
+}
+
+
 module.exports = {
   testOrder,
   addOrder,
@@ -201,4 +213,5 @@ module.exports = {
   updateOrder,
   searchAndSort,
   manyToOne,
+  addOrderDetails
 };

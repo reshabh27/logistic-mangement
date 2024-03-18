@@ -9,7 +9,7 @@ exports.auth = async (req, res, next) => {
         // console.log("token", token);
         if (!token)
             return res.status(400).send({ message: "Please Authenticate first." })
-        const decoded = jwt.verify(token, "my_secret")
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
         const curUser = await users.findOne({
             where: {
                 id: decoded.id,
@@ -34,5 +34,5 @@ exports.auth = async (req, res, next) => {
         console.log(error);
     }
 
-  
-  } 
+
+} 

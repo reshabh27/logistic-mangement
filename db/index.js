@@ -13,10 +13,7 @@ sequelize.authenticate().then(() => {
     console.log(e);
 })
 
-sequelize.sync().then(() => {
-}).catch((e) => {
-    console.log("there is an error while synching", e);
-})
+
 
 
 const db = {};
@@ -40,18 +37,16 @@ db.orderTransports = require('../models/orderTransport.js')(sequelize, DataTypes
 // db.orders.belongsTo(db.users);
 
 // creating many to many relationship between transports and orders table
-db.transports.belongsToMany(db.orders, { through: db.orderTransports,foreignKey:'transportId' });
-db.orders.belongsToMany(db.transports, { through: db.orderTransports,foreignKey:'orderId' });
+db.transports.belongsToMany(db.orders, { through: 'db.orderTransports', foreignKey: 'transportId' });
+db.orders.belongsToMany(db.transports, { through: 'db.orderTransports', foreignKey: 'orderId' });
 
-// creating many to many relationship between order and product table
-db.products.belongsToMany(db.orders, { through: db.orderDetails,foreignKey:'productId' });
-db.orders.belongsToMany(db.products, { through: db.orderDetails,foreignKey:'orderId' });
+
 
 // creating many to many relationship between user and product table through productSupplier
 
-db.products.belongsToMany(db.users,{through:db.productSupplier,foreignKey:"productId"});
-db.users.belongsToMany(db.products,{through:db.productSupplier,foreignKey:"userId"});  
- 
+db.products.belongsToMany(db.users, { through: db.productSupplier, foreignKey: "productId" });
+db.users.belongsToMany(db.products, { through: db.productSupplier, foreignKey: "userId" });
+
 // creating many to many relationship between product and warehouse through Inventory
 
 db.products.belongsToMany(db.warehouses, { through: db.inventory, foreignKey: "productId" });
@@ -67,14 +62,38 @@ db.warehouses.belongsToMany(db.orders, { through: db.orderWarehouses, foreignKey
 db.orders.belongsToMany(db.warehouses, { through: db.orderWarehouses });
 db.warehouses.belongsToMany(db.orders, { through: db.orderWarehouses });
 
-db.orders.sync({ force: false })
-db.transports.sync({ force: false })
-db.orderTransports.sync({ force: false })
-db.users.sync({ alter:false })
-db.orderDetails.sync({ force: false })
+// creating many to one relationship between product and orderDetails
+db.products.hasMany(db.orderDetails, { foreignKey: "productId" });
+db.orderDetails.belongsTo(db.products);
 
 
-db.warehouses.sync({force:false}).then(()=>{console.log("resyncing warehouses model")}).catch((err)=>{console.log(err)});
-db.orderWarehouses.sync({force:false}).then(()=>{console.log("resyncing orderWarehouses model")}).catch((err)=>{console.log(err)});
-db.inventory.sync({force:false}).then(()=>{console.log("resyncing inventory model")}).catch((err)=>{console.log(err)});
+db.users.sync().then(() => { console.log("resyncing users model") }).catch((err) => { console.log("err while users", err) });
+
+db.products.sync().then(() => console.log("resync product model")).catch((err) => console.log("err while products", err));
+db.productSupplier.sync().then(() => console.log("resync productSupplier model")).catch((err) => console.log("err while productSupplier", err));
+
+db.orders.sync({ force: false }).then(() => { console.log("resyncing orders model") }).catch((err) => { console.log("err while orders", err) });
+db.orderTransports.sync({ force: false }).then(() => { console.log("resyncing orderTransports model") }).catch((err) => { console.log("err while orderTransports", err) });
+
+db.transports.sync({ force: false }).then(() => { console.log("resyncing transports model") }).catch((err) => { console.log("err while transports", err) });
+
+db.warehouses.sync({ force: false }).then(() => { console.log("resyncing warehouses model") }).catch((err) => { console.log("err while warehouses", err) });
+
+db.inventory.sync({ force: false }).then(() => { console.log("resyncing inventory model") }).catch((err) => { console.log("err while inventory", err) });
+
+db.orderWarehouses.sync({ force: false }).then(() => { console.log("resyncing orderWarehouses model") }).catch((err) => { console.log("err while orderWarehouses", err) });
+
+db.orderDetails.sync({ force: false }).then(() => { console.log("resyncing orderDetails model") }).catch((err) => { console.log("err while orderDetails", err) });
+
+
+
+
+
+// sequelize.sync().then(() => {
+// }).catch((e) => {
+//     console.log("there is an error while synching", e);
+// })
+
+
+
 module.exports = db;
