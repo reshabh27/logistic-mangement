@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       validate: {
         isIn: {
-          args: [["Admin", "Supplier", "Customer", "Warehouse Manager", "Transport Manager"]],
+          args: [["Super Admin", "Admin", "Supplier", "Customer", "Warehouse Manager", "Transport Manager"]],
           msg: "Please select role from Admin, Supplier, Customer, Warehouse Manager, Transport Manager",
         },
       },

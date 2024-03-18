@@ -63,45 +63,37 @@ db.orders.belongsToMany(db.warehouses, { through: db.orderWarehouses });
 db.warehouses.belongsToMany(db.orders, { through: db.orderWarehouses });
 
 // creating many to one relationship between product and orderDetails
-db.products.hasMany(db.orderDetails,{foreignKey:"productId"});
+db.products.hasMany(db.orderDetails, { foreignKey: "productId" });
 db.orderDetails.belongsTo(db.products);
 
-//creating many to one relationship between WareHouse and Inventory
-db.warehouses.hasMany(db.inventory,{foreignKey:"wareHouseId"});
-db.inventory.belongsTo(db.warehouses);
 
-//creating many to one relationship between Product and Inventory
-db.products.hasMany(db.inventory,{foreignKey:"productId"});
-db.inventory.belongsTo(db.products);
+db.users.sync().then(() => { console.log("resyncing users model") }).catch((err) => { console.log("err while users", err) });
 
+db.products.sync().then(() => console.log("resync product model")).catch((err) => console.log("err while products", err));
+db.productSupplier.sync().then(() => console.log("resync productSupplier model")).catch((err) => console.log("err while productSupplier", err));
 
-db.orders.sync({ force: false })
-db.transports.sync({ force: false })
-db.orderTransports.sync({ force: false })
-db.users.sync({ alter: false })
+db.orders.sync({ force: false }).then(() => { console.log("resyncing orders model") }).catch((err) => { console.log("err while orders", err) });
+db.orderTransports.sync({ force: false }).then(() => { console.log("resyncing orderTransports model") }).catch((err) => { console.log("err while orderTransports", err) });
 
-db.orderDetails.sync({ force: false })
+db.transports.sync({ force: false }).then(() => { console.log("resyncing transports model") }).catch((err) => { console.log("err while transports", err) });
 
-db.warehouses.sync({ force: false }).then(() => { console.log("resyncing warehouses model") }).catch((err) => { console.log(err) });
-db.orderWarehouses.sync({ force: false }).then(() => { console.log("resyncing orderWarehouses model") }).catch((err) => { console.log(err) });
-db.inventory.sync({ force: false }).then(() => { console.log("resyncing inventory model") }).catch((err) => { console.log(err) });
+db.warehouses.sync({ force: false }).then(() => { console.log("resyncing warehouses model") }).catch((err) => { console.log("err while warehouses", err) });
 
+db.inventory.sync({ force: false }).then(() => { console.log("resyncing inventory model") }).catch((err) => { console.log("err while inventory", err) });
 
-db.productSupplier.sync().then(() => console.log("resync productSupplier model"))
-    .catch((err) => console.log(err));
+db.orderWarehouses.sync({ force: false }).then(() => { console.log("resyncing orderWarehouses model") }).catch((err) => { console.log("err while orderWarehouses", err) });
 
-db.products.sync().then(() => console.log("resync product model"))
-    .catch((err) => console.log(err));
+db.orderDetails.sync({ force: false }).then(() => { console.log("resyncing orderDetails model") }).catch((err) => { console.log("err while orderDetails", err) });
 
 
-sequelize.sync().then(() => {
-}).catch((e) => {
-    console.log("there is an error while synching", e);
-})
 
 
-db.warehouses.sync({force:false}).then(()=>{console.log("resyncing warehouses model")}).catch((err)=>{console.log(err)});
-db.orderWarehouses.sync({force:false}).then(()=>{console.log("resyncing orderWarehouses model")}).catch((err)=>{console.log(err)});
-db.inventory.sync({force:false}).then(()=>{console.log("resyncing inventory model")}).catch((err)=>{console.log(err)});
-db.orderDetails.sync({force:false}).then(()=>{console.log("resyncing orderDetails model")}).catch((err)=>{console.log(err)});
+
+// sequelize.sync().then(() => {
+// }).catch((e) => {
+//     console.log("there is an error while synching", e);
+// })
+
+
+
 module.exports = db;
