@@ -32,6 +32,7 @@ const getTranports = async (req, res) => {
       return res.status(400).send({ message: "you are not allowed to do this operation." })
 
     const transport = await Transport.findAll({});
+    // res.send(transport);
     res.status(200).json({
       data: transport,
     });

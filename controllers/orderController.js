@@ -23,11 +23,9 @@ const getOrder = async (req, res) => {
   try {
     const permitedRoles = ["Admin", "Customer", "Warehouse Manager", "Super Admin"];
     if (!permitedRoles.includes(req.role))
-      res
-        .status(403)
-        .send({
-          message: "your type of roles are not permited to access this.",
-        });
+      res.status(403).send({
+        message: "your type of roles are not permited to access this.",
+      });
 
     const order = await Order.findAll({});
     res.status(200).json({
@@ -44,11 +42,9 @@ const getOrderById = async (req, res) => {
   try {
     const permitedRoles = ["Admin", "Customer", "Warehouse Manager", "Super Admin"];
     if (!permitedRoles.includes(req.role))
-      return res
-        .status(403)
-        .send({
-          message: "your type of roles are not permited to access this.",
-        });
+      return res.status(403).send({
+        message: "your type of roles are not permited to access this.",
+      });
     if (req.role === "Customer") {
       if (req.params.id !== req.user.id)
         return res
