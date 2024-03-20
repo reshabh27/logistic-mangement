@@ -8,6 +8,8 @@ module.exports = (sequelize, DataTypes) => {
             notEmpty:true
         }
       },
+
+      // changed here
       wareHouseId: {
         type: DataTypes.INTEGER,
         allowNull:false,
