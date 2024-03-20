@@ -77,7 +77,7 @@ module.exports = (sequelize, DataTypes) => {
         min: 0
       },
     },
-  });
+  }});
   return Inventory;
 };
 
