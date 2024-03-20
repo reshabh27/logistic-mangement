@@ -4,10 +4,11 @@ const Transport = db.transports;
 const testTC = async (req, res) => {
   res.send("transport is working");
 };
+
 const addTransports = async (req, res) => {
   try {
-    if (req.role !== 'Admin')
-      return res.status(400).send({ message: "you are not allowed to do this operation." })
+    // if ((req.role !== 'Admin') && (req.role !== "Super Admin"))
+    //   return res.status(400).send({ message: "you are not allowed to do this operation." })
 
     const postData = req.body;
     let transport;
@@ -28,10 +29,11 @@ const addTransports = async (req, res) => {
 
 const getTranports = async (req, res) => {
   try {
-    if (req.role !== 'Admin' && req.role !== 'Transport Manager')
-      return res.status(400).send({ message: "you are not allowed to do this operation." })
+    // if ((req.role !== 'Admin') && (req.role !== 'Transport Manager') && (req.role !== "Super Admin"))
+    //   return res.status(400).send({ message: "you are not allowed to do this operation." })
 
     const transport = await Transport.findAll({});
+    // res.send(transport);
     res.status(200).json({
       data: transport,
     });
@@ -44,8 +46,8 @@ const getTranports = async (req, res) => {
 
 const getTransportById = async (req, res) => {
   try {
-    if (req.role !== 'Admin' && req.role !== 'Transport Manager')
-      return res.status(400).send({ message: "you are not allowed to do this operation." })
+    // if ((req.role !== 'Admin') && (req.role !== 'Transport Manager') && (req.role !== "Super Admin"))
+    //   return res.status(400).send({ message: "you are not allowed to do this operation." })
 
     const transport = await Transport.findOne({
       where: {
@@ -69,8 +71,8 @@ const getTransportById = async (req, res) => {
 
 const deleteTransport = async (req, res) => {
   try {
-    if (req.role !== 'Admin')
-      return res.status(400).send({ message: "you are not allowed to do this operation." })
+    // if ((req.role !== 'Admin') && (req.role !== "Super Admin"))
+    //   return res.status(400).send({ message: "you are not allowed to do this operation." })
 
     const transport = await Transport.findOne({
       where: {
@@ -78,7 +80,7 @@ const deleteTransport = async (req, res) => {
       },
     });
     if (!transport) {
-      res.status(404).json({
+      return res.status(404).json({
         message: `transport with id ${req.params.id} is not found`,
       });
     } else {
@@ -100,8 +102,8 @@ const deleteTransport = async (req, res) => {
 
 const updateTransport = async (req, res) => {
   try {
-    if (req.role !== 'Admin')
-      return res.status(400).send({ message: "you are not allowed to do this operation." })
+    // if ((req.role !== 'Admin') && (req.role !== "Super Admin"))
+    //   return res.status(400).send({ message: "you are not allowed to do this operation." })
 
     const transport = await Transport.findOne({
       where: {
@@ -131,8 +133,8 @@ const updateTransport = async (req, res) => {
 
 const transportQuery = async (req, res) => {
   try {
-    if (req.role !== 'Admin')
-      return res.status(400).send({ message: "you are not allowed to do this operation." })
+    // if ((req.role !== 'Admin') && (req.role !== "Super Admin"))
+    //   return res.status(400).send({ message: "you are not allowed to do this operation." })
 
     const {
       page = 1,
@@ -142,6 +144,8 @@ const transportQuery = async (req, res) => {
       type,
       minCapacity,
       maxCapacity,
+      minCostPerMile,
+      maxCostPerMile
     } = req.query;
 
     const offset = (page - 1) * limit;
@@ -160,6 +164,11 @@ const transportQuery = async (req, res) => {
         [Sequelize.Op.between]: [minCapacity, maxCapacity],
       };
     }
+    if (minCostPerMile !== undefined && maxCostPerMile !== undefined) {
+        whereClause.costPerMile = {
+          [Sequelize.Op.between]: [minCostPerMile, maxCostPerMile],
+        };
+      }
 
     const order = [[orderBy, sortBy.toUpperCase()]];
 

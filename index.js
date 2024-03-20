@@ -1,19 +1,14 @@
 const express = require("express");
 require("dotenv").config();
 
-const cors = require("cors");
-
 const orderRouter = require("./routes/orderRoutes.js");
 const userRoute = require("./routes/userRoutes.js");
 const { productRouter } = require("./routes/ProductRoute.js");
-const { Product } = require("./models/products.js");
 const transportRouter = require("./routes/transportRoutes.js");
-const db = require("./db");
 const { wareHouseRouter } = require("./routes/wareHouseRoutes.js");
 const { inventoryRouter } = require("./routes/inventoryRoutes.js");
 const relationRouter = require("./routes/relationshipRoutes.js");
 const orderTransportRouter = require("./routes/orderTransportRoutes.js");
-
 const dashboardRoute = require("./routes/dashboardRoute.js");
 
 const app = express();
@@ -24,7 +19,7 @@ app.use(express.json());
 
 
 
-app.use(express.json());
+// app.use(express.json());
 
 app.use("/dashboard", dashboardRoute);
 

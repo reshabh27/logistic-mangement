@@ -12,7 +12,7 @@ const check = (req, res) => {
 // route handler for adding inventory
 const addInventory = async (req, res) => {
   try {
-    if (req.role !== 'Warehouse Manager')
+    if ((req.role !== 'Warehouse Manager') && (req.role !== "Super Admin"))
       return res.status(400).send({ message: "you are not allowed to do this operation." })
 
     const inventory = await Inventory.create(req.body);
@@ -27,7 +27,7 @@ const addInventory = async (req, res) => {
 // route handler for updating inventory
 const updateInventory = async (req, res) => {
 
-  if (req.role !== 'Warehouse Manager')
+  if ((req.role !== 'Warehouse Manager') && (req.role !== "Super Admin"))
     return res.status(400).send({ message: "you are not allowed to do this operation." })
 
   const id = req.params.id;
@@ -72,7 +72,7 @@ const updateInventory = async (req, res) => {
 const deleteInventory = async (req, res) => {
   const id = req.params.id;
   try {
-    if (req.role !== 'Warehouse Manager')
+    if ((req.role !== 'Warehouse Manager') && (req.role !== "Super Admin"))
       return res.status(400).send({ message: "you are not allowed to do this operation." })
 
     const inventory = await Inventory.findOne({
@@ -97,7 +97,7 @@ const specificProductInventory = async (req, res) => {
   const id = req.params.id;
   try {
 
-    if (req.role !== 'Admin' && req.role !== 'Warehouse Manager')
+    if ((req.role !== 'Admin') && (req.role !== 'Warehouse Manager') && (req.role !== "Super Admin"))
       return res.status(400).send({ message: "you are not allowed to do this operation." })
 
     const inventory = await Product.findAll({

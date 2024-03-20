@@ -8,8 +8,8 @@ const testOrder = async (req, res) => {
 };
 const addOrder = async (req, res) => {
   try {
-    if (req.role !== "Customer")
-        return res.status(403).send({ message: "Only customers can request orders." })
+    if ((req.role !== "Customer") && (req.role !== "Super Admin"))
+      return res.status(403).send({ message: "Only customers can request orders." })
     const order = await Order.create(req.body);
     res.status(201).json({
       status: "success",
@@ -21,13 +21,11 @@ const addOrder = async (req, res) => {
 };
 const getOrder = async (req, res) => {
   try {
-    const permitedRoles = ["Admin", "Customer", "Warehouse Manager"];
+    const permitedRoles = ["Admin", "Customer", "Warehouse Manager", "Super Admin"];
     if (!permitedRoles.includes(req.role))
-      res
-        .status(403)
-        .send({
-          message: "your type of roles are not permited to access this.",
-        });
+      res.status(403).send({
+        message: "your type of roles are not permited to access this.",
+      });
 
     const order = await Order.findAll({});
     res.status(200).json({
@@ -42,13 +40,11 @@ const getOrder = async (req, res) => {
 };
 const getOrderById = async (req, res) => {
   try {
-    const permitedRoles = ["Admin", "Customer", "Warehouse Manager"];
+    const permitedRoles = ["Admin", "Customer", "Warehouse Manager", "Super Admin"];
     if (!permitedRoles.includes(req.role))
-      return res
-        .status(403)
-        .send({
-          message: "your type of roles are not permited to access this.",
-        });
+      return res.status(403).send({
+        message: "your type of roles are not permited to access this.",
+      });
     if (req.role === "Customer") {
       if (req.params.id !== req.user.id)
         return res
@@ -77,7 +73,7 @@ const getOrderById = async (req, res) => {
 };
 const deleteOrder = async (req, res) => {
   try {
-    if (req.role !== "Admin")
+    if ((req.role !== "Admin") && (req.role !== "Super Admin"))
       return res
         .status(403)
         .send({ message: "You are not allowed to do this operation." });
@@ -109,7 +105,7 @@ const deleteOrder = async (req, res) => {
 };
 const updateOrder = async (req, res) => {
   try {
-    if (req.role !== "Admin" && req.role !== "Warehouse Manager")
+    if ((req.role !== "Admin") && (req.role !== "Warehouse Manager") && (req.role !== "Super Admin"))
       return res
         .status(403)
         .send({ message: "You are not allowed to do this operation." });
@@ -144,18 +140,34 @@ const searchAndSort = async (req, res) => {
   const {
     page = 1,
     limit = 2,
-    orderBy = "userId",
+    orderBy = "orderDate",
     sortBy = "asc",
     keyword,
+    customerId,
+    status,
+    orderDate,deliveryDate
   } = req.query;
 
   // Calculate offset for pagination
   const offset = (page - 1) * limit;
 
   // Build the where clause for search
-  const whereClause = keyword
-    ? { status: { [Sequelize.Op.like]: `%${keyword}%` } }
-    : {};
+  // const whereClause = keyword
+  //   ? { status: { [Sequelize.Op.like]: `%${keyword}%` } }
+  //   : {};
+  const whereClause={}
+  if(customerId){
+    whereClause.customerId=customerId
+  }
+  if(orderDate){
+    whereClause.orderDate=orderDate
+  }
+  if(deliveryDate){
+    whereClause.deliveryDate=deliveryDate
+  }
+  if(status){
+    whereClause.status=status
+  }
 
   // Build the order array for sorting
   const order = [[orderBy, sortBy.toUpperCase()]];
@@ -198,12 +210,12 @@ const manyToOne = async (req, res) => {
 
 // pushing data inside order details
 
-const addOrderDetails = async(req,res) => {
+const addOrderDetails = async (req, res) => {
   try {
     const orderDetails = await OrderDetails.create(req.body);
-    return res.status(200).json({orderDetails});
+    return res.status(200).json({ orderDetails });
   } catch (error) {
-    return res.status(400).json({error});
+    return res.status(400).json({ error });
   }
 }
 

@@ -46,7 +46,7 @@ exports.getAllUsers = asyncErrorHandler(async (req, res) => {
     }
 
     // Check if the user is an admin
-    if (req.role !== "Admin")
+    if ((req.role !== "Admin") && (req.role !== "Super Admin"))
         return res.status(403).send({ message: "You are not allowed to do this operation." });
 
     // Find all users based on role, username and order
@@ -116,7 +116,7 @@ exports.handleLogout = asyncErrorHandler(async (req, res) => {
 
 // Controller for updating user role
 exports.handleUpdateUserRole = asyncErrorHandler(async (req, res) => {
-    if (req.role !== "Admin")
+    if ((req.role !== "Admin") && (req.role !== "Super Admin"))
         res.status(401).send({ message: "only Admin can access this." })
 
     const userId = req.params.userId
@@ -134,7 +134,7 @@ exports.handleUpdateUserRole = asyncErrorHandler(async (req, res) => {
 
 // Controller for deleting user profile
 exports.handleDeleteProfile = asyncErrorHandler(async (req, res) => {
-    if (req.role !== "Admin")
+    if ((req.role !== "Admin") && (req.role !== "Super Admin"))
         res.status(403).send({ messgae: "You are not allowed to do this operation" })
 
     const userId = req.params.userId;

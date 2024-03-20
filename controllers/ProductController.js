@@ -16,9 +16,9 @@ const addProduct = async (req, res) => {
   console.log("Transaction Initiated");
   try {
     // checking user role 
-    if (req.role !== "Supplier")
+    if ((req.role !== "Supplier") && (req.role !== "Super Admin"))
       return res.status(403).send({ message: "You are not allowed to do this operation." })
-    const product = await Product.create(req.body,{transaction:t});
+    const product = await Product.create(req.body, { transaction: t });
     await t.commit();
     console.log("Transaction Commited");
     return res
@@ -37,7 +37,7 @@ const getProductById = async (req, res) => {
   const t = await db.sequelize.transaction();
   console.log("Transaction Initiated");
   // checking if cuurent user is from Admin, Supplier, Customer roles
-  const allowedRoles = ["Admin", "Supplier", "Customer"];
+  const allowedRoles = ["Admin", "Supplier", "Customer", "Super Admin"];
   const isAllowed = allowedRoles.includes(req.role);
   if (!isAllowed)
     return res
@@ -68,7 +68,7 @@ const updateProductById = async (req, res) => {
   const t = await db.sequelize.transaction();
   console.log("Transaction Initiated");
   // checking user role
-  if (req.role !== "Supplier")
+  if ((req.role !== "Supplier") && (req.role !== "Super Admin"))
     return res
       .status(403)
       .send({ message: "You are not allowed to do this operation." });
@@ -117,7 +117,7 @@ const deleteProductById = async (req, res) => {
   const t = await db.sequelize.transaction();
   console.log("Transaction Initiated");
   // checking user role
-  if (req.role !== "Supplier")
+  if ((req.role !== "Supplier") && (req.role !== "Super Admin"))
     return res
       .status(403)
       .send({ message: "You are not allowed to do this operation." });
@@ -163,7 +163,7 @@ const getProducts = async (req, res) => {
   const t = await db.sequelize.transaction();
   console.log("Transaction initiated");
   // checking if cuurent user is from Admin, Supplier, Customer roles
-  const allowedRoles = ["Admin", "Supplier", "Customer"];
+  const allowedRoles = ["Admin", "Supplier", "Customer", "Super Admin"];
   const isAllowed = allowedRoles.includes(req.role);
   if (!isAllowed)
     return res
@@ -264,7 +264,7 @@ const getProducts = async (req, res) => {
 };
 
 module.exports = {
-  productCheck, 
+  productCheck,
   addProduct,
   getProductById,
   updateProductById,
