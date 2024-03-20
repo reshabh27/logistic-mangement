@@ -119,3 +119,4 @@ const specificProductInventory = async (req, res) => {
 
 
 module.exports = { check, addInventory, updateInventory, deleteInventory, specificProductInventory };
+

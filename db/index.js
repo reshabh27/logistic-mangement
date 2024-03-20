@@ -21,8 +21,8 @@ const db = {};
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.orders = require('../models/orders')(sequelize, DataTypes)
 db.users = require('../models/users')(sequelize, DataTypes)
+db.orders = require('../models/orders')(sequelize, DataTypes)
 db.orderDetails = require('../models/orderDetails')(sequelize, DataTypes)
 db.orderWarehouses = require('../models/orderWarehouse')(sequelize, DataTypes)
 db.warehouses = require('../models/warehouse')(sequelize, DataTypes)
@@ -48,6 +48,8 @@ db.users.belongsToMany(db.products, { through: db.productSupplier, foreignKey: "
 
 // creating many to many relationship between product and warehouse through Inventory
 
+
+// changed here
 db.products.belongsToMany(db.warehouses, { through: db.inventory, foreignKey: "productId" });
 db.warehouses.belongsToMany(db.products, { through: db.inventory, foreignKey: "wareHouseId" });
 
@@ -65,6 +67,9 @@ db.warehouses.belongsToMany(db.orders, { through: db.orderWarehouses });
 db.products.hasMany(db.orderDetails, { foreignKey: "productId" });
 db.orderDetails.belongsTo(db.products);
 
+//creating many to one relationship between WareHouse and Inventory
+db.warehouses.belongsTo(db.inventory,{foreignKey:"warehouseId"});
+db.inventory.belongsTo(db.warehouses);
 
 db.users.sync().then(() => { console.log("resyncing users model") }).catch((err) => { console.log("err while users", err) });
 
