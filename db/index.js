@@ -41,7 +41,6 @@ db.transports.belongsToMany(db.orders, { through: 'db.orderTransports', foreignK
 db.orders.belongsToMany(db.transports, { through: 'db.orderTransports', foreignKey: 'orderId' });
 
 
-
 // creating many to many relationship between user and product table through productSupplier
 
 db.products.belongsToMany(db.users, { through: db.productSupplier, foreignKey: "productId" });
